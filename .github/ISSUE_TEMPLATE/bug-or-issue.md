@@ -1,5 +1,5 @@
 ---
-name: 버그 / 이슈
+name: Bug or Issue
 about: 버그 / 이슈 템플릿
 title: "[BUG]"
 labels: ''
