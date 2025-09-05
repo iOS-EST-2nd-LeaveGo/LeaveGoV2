@@ -23,7 +23,7 @@ class Planner: Identifiable {
 
 // 더미 데이터
 let mockPlanners = [
-    Planner(id: UUID(), title: "👒 모두 다함께 광화문 여행을 떠나봅시다", thumbnailPath: nil, placeList: nil),
+    Planner(id: UUID(), title: "👒 모두 다함께 광화문 여행을 떠나봅시다", thumbnailPath: "02", placeList: nil),
     Planner(id: UUID(), title: "🌊 부산 여행", thumbnailPath: nil, placeList: nil),
     Planner(id: UUID(), title: "🚀 우주 여행 ✨", thumbnailPath: nil, placeList: nil)
 ]
