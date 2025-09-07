@@ -10,45 +10,16 @@ import SwiftUI
 struct PlannerView: View {
     @State private var path = NavigationPath()
     
-    let planners: [Planner] = mockPlanners
-    //let planners = [Planner]()
+    //let planners: [Planner] = mockPlanners
+    let planners = [Planner]()
     
     var body: some View {
-        let columns = [
-            GridItem(.flexible(), spacing: DesignToken.Spacing.large),
-            GridItem(.flexible())
-        ]
-        
         NavigationStack(path: $path) {
             VStack {
                 if !planners.isEmpty {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: DesignToken.Spacing.large) {
-                            ForEach(planners) { planner in
-                                PlannerCardView(planner: planner)
-                            }
-                            
-                            Button {
-                                path.append("newPlanner")
-                            } label: {
-                                PlannerCardView(planner: nil)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, DesignToken.Spacing.large)
+                    PlannerListView(plannerList: planners, path: $path)
                 } else {
-                    VStack {
-                        Spacer()
-                        
-                        Text("아직 등록된 여행이 없어요")
-                            .foregroundStyle(.secondary)
-                        
-                        Spacer()
-                        
-                        Button("여행 추가하기") {
-                            path.append("newPlanner")
-                        }
-                    }
+                    PlannerPlaceholderView(path: $path)
                 }
                 
                 Spacer()
@@ -66,4 +37,52 @@ struct PlannerView: View {
 
 #Preview {
     PlannerView()
+}
+
+struct PlannerListView: View {
+    var plannerList: [Planner]
+    @Binding var path: NavigationPath
+    
+    var body: some View {
+        let columns = [
+            GridItem(.flexible(), spacing: DesignToken.Spacing.large),
+            GridItem(.flexible())
+        ]
+        
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: DesignToken.Spacing.large) {
+                ForEach(plannerList) { planner in
+                    PlannerCardView(planner: planner)
+                }
+                
+                Button {
+                    path.append("newPlanner")
+                } label: {
+                    PlannerCardView(planner: nil)
+                }
+            }
+        }
+        .padding(.horizontal, DesignToken.Spacing.large)
+    }
+}
+
+struct PlannerPlaceholderView: View {
+    @Binding var path: NavigationPath
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            
+            Text("아직 등록된 여행이 없어요")
+                .foregroundStyle(.lgLabelSecondary)
+            
+            Spacer()
+            
+            PrimaryButton(
+                title: "여행 추가하기",
+                action: { path.append("newPlanner") }
+            )
+            .padding(.horizontal, DesignToken.Spacing.large)
+        }
+    }
 }
