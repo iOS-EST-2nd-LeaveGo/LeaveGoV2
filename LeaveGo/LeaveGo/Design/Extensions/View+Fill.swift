@@ -14,7 +14,6 @@ struct FillStyle {
     static let white = FillStyle(color: .lgTextField)
     static let accent = FillStyle(color: .lgBackgroundAccent)
     static let lightAccent = FillStyle(color: .lgBackgroundAccentLight)
-
 }
 
 extension View {
