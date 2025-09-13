@@ -8,7 +8,7 @@
 import Foundation
 
 class PlannerPlaceListModel {
-    //let area: Area
+    let area: Area
     let places: [PlannerPlace?]
     
     class PlannerPlace {
@@ -23,8 +23,8 @@ class PlannerPlaceListModel {
         }
     }
     
-    init(/*area: Area, */places: [PlannerPlace?]) {
-        //self.area = area
+    init(area: Area, places: [PlannerPlace?]) {
+        self.area = area
         self.places = places
     }
 }
