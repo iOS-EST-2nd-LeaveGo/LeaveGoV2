@@ -22,7 +22,7 @@ struct BottomActionButton: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: DesignToken.Spacing.large)
+            .frame(height: DesignToken.Spacing.xxLarge)
             .allowsHitTesting(false)
 
             PrimaryButton(title: title, isEnabled: isEnabled, action: action)
