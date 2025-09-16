@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct PlannerPlaceListView: View {
-    @State var places = [Place]()
-    @State var shouldProceed: Bool = false
-    @State var selectedPlaces = Set<Place>()
-    @State var selectedPlaceForDetails: Place?
-    
     let area: Area
+    @Binding var selectedPlaces: Set<Place>
+    
+    @State var places = [Place]()
+    @State var selectedPlaceForDetails: Place?
     
     var body: some View {
         ZStack {
@@ -30,7 +29,6 @@ struct PlannerPlaceListView: View {
                                     } else {
                                         selectedPlaces.remove(place)
                                     }
-                                    print(selectedPlaces.map { $0.title })
                                 } accessoryAction: {
                                     selectedPlaceForDetails = place
                                 }
@@ -41,17 +39,7 @@ struct PlannerPlaceListView: View {
                         }
                     }
                     .padding(.horizontal, DesignToken.Spacing.large)
-                    
-                    BottomActionButton(
-                        title: "추가하기",
-                        isEnabled: !selectedPlaces.isEmpty) {
-                            shouldProceed = true
-                        }
                 }
-                .navigationDestination(
-                    isPresented: $shouldProceed) {
-                        
-                    }
             } else {
                 EmptyView()
             }

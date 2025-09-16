@@ -10,11 +10,26 @@ import SwiftUI
 struct PlannerPlaceSelectionView: View {
     let area: Area
     
+    @State var selectedPlaces = Set<Place>()
+    @State var shouldProceed: Bool = false
+    
     var body: some View {
-        VStack {
-            PlannerPlaceListView(area: area)
+        ZStack(alignment: .bottom) {
+            PlannerPlaceListView(area: area, selectedPlaces: $selectedPlaces)
+                .frame(maxHeight: .infinity)
+            
+            BottomActionButton(
+                title: "추가하기",
+                isEnabled: !selectedPlaces.isEmpty) {
+                    shouldProceed = true
+                    print("\(selectedPlaces.map { $0.title })")
+                }
         }
-        .navigationTitle(area.name)
+        .navigationTitle("여행지 선택하기")
+        .navigationDestination(
+            isPresented: $shouldProceed) {
+                PlannerComposeView(selectedPlaces: selectedPlaces)
+            }
     }
 }
 
