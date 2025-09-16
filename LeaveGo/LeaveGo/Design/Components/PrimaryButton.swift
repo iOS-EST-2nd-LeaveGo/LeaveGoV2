@@ -21,9 +21,9 @@ struct PrimaryButton: View {
             Text(title)
                 .font(.title3)
                 .foregroundStyle(isEnabled ? .white : .gray.opacity(0.6))
+                .frame(height: DesignToken.Layout.buttonHeight)
+                .frame(maxWidth: .infinity)
         }
-        .frame(height: DesignToken.Layout.buttonHeight)
-        .frame(maxWidth: .infinity)
         .background {
             isEnabled ? .lgAccent : Color(.systemGray5)
         }
