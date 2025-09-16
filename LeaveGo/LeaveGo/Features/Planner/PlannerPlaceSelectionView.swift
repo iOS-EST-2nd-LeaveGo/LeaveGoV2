@@ -11,7 +11,10 @@ struct PlannerPlaceSelectionView: View {
     let area: Area
     
     var body: some View {
-        Text(area.name)
+        VStack {
+            PlannerPlaceListView(area: area)
+        }
+        .navigationTitle(area.name)
     }
 }
 
