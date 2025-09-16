@@ -30,6 +30,7 @@ struct PlannerAreaSelectionView: View {
                         }
                     }
                 }
+                .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
             }
             .padding(.horizontal, DesignToken.Spacing.large)
             

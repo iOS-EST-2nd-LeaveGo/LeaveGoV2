@@ -36,6 +36,11 @@ struct PlannerPlaceListView: View {
                 }
                 .listStyle(.plain)
                 .buttonStyle(.plain)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear
+                        .frame(height: DesignToken.Layout.bottomActionButtonHeight)
+                }
+
             } else {
                 EmptyView()
             }
