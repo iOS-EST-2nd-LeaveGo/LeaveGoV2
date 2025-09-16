@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct PlannerComposeView: View {
     let selectedPlaces: [Place]
@@ -56,12 +57,56 @@ struct PlannerNameSection: View {
 
 struct ThumbnailSection: View {
     @State var photoItem: PhotosPickerItem?
+    @State var selectedImage: UIImage?
+    
+    let imageWidth: CGFloat = 80
     
     var body: some View {
         VStack(alignment: .leading, spacing: DesignToken.Spacing.medium) {
-            SectionHeader(title: "썸네일")
+            HStack {
+                SectionHeader(title: "썸네일")
+                
+                Spacer()
+                
+                PhotosPicker(
+                    selection: $photoItem,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
+                    SectionButtonLabel(title: "사진 가져오기")
+                }
+            }
             
-            PlaceholderImageView(width: 80)
+            if let selectedImage {
+                SelectedImageView(selectedImage: selectedImage, imageWidth: imageWidth)
+            } else {
+                PlaceholderImageView(width: imageWidth)
+            }
+        }
+        .task(id: photoItem) {
+            guard let photoItem = photoItem else { return }
+
+            if let data = try? await photoItem.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                selectedImage = image
+            }
+        }
+    }
+    
+    private struct SelectedImageView: View {
+        let selectedImage: UIImage
+        let imageWidth: CGFloat
+        
+        var body: some View {
+            Image(uiImage: selectedImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageWidth, height: imageWidth)
+                .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.medium))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignToken.Radius.medium)
+                        .strokeBorder(.lgBorderProminent)
+                )
         }
     }
 }
