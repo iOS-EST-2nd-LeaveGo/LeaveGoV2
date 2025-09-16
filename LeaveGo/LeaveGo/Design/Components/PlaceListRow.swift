@@ -60,7 +60,7 @@ struct PlaceListRow: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, DesignToken.Spacing.medium)
+        .listRowSeparator(.hidden)
     }
 }
 

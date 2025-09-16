@@ -15,30 +15,27 @@ struct PlannerPlaceListView: View {
     @State var selectedPlaceForDetails: Place?
     
     var body: some View {
-        ZStack {
+        VStack {
             if !places.isEmpty {
-                ScrollView {
-                    LazyVStack(spacing: .zero) {
-                        ForEach(places) { place in
-                            PlaceListRow(
-                                place: place,
-                                listMode: .selectable) {
-                                    if let index = selectedPlaces.firstIndex(of: place) {
-                                        selectedPlaces.remove(at: index)
-                                    } else {
-                                        selectedPlaces.append(place)
-                                    }
-                                } accessoryAction: {
-                                    selectedPlaceForDetails = place
-                                }
-                                .sheet(item: $selectedPlaceForDetails) { place in
-                                    Text(place.title)
-                                        .presentationDetents([.fraction(0.4), .large])
-                                }
+                List(places) { place in
+                    PlaceListRow(
+                        place: place,
+                        listMode: .selectable) {
+                            if let index = selectedPlaces.firstIndex(of: place) {
+                                selectedPlaces.remove(at: index)
+                            } else {
+                                selectedPlaces.append(place)
+                            }
+                        } accessoryAction: {
+                            selectedPlaceForDetails = place
                         }
-                    }
-                    .padding(.horizontal, DesignToken.Spacing.large)
+                        .sheet(item: $selectedPlaceForDetails) { place in
+                            Text(place.title)
+                                .presentationDetents([.fraction(0.4), .large])
+                        }
                 }
+                .listStyle(.plain)
+                .buttonStyle(.plain)
             } else {
                 EmptyView()
             }
