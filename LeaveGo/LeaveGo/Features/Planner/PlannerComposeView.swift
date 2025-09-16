@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct PlannerComposeView: View {
-    @Environment(\.dismiss) var dismiss
-    
     let selectedPlaces: [Place]
     
     @State var plannerTitle = ""
@@ -20,56 +18,11 @@ struct PlannerComposeView: View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
-                    CommonTextField(
-                        label: "제목 *",
-                        value: $plannerTitle,
-                        prompt: "여행의 제목을 입력하세요"
-                    )
+                    PlannerNameSection(value: $plannerTitle)
                     
-                    VStack(alignment: .leading, spacing: DesignToken.Spacing.medium) {
-                        Text("썸네일")
-                            .padding(.leading, DesignToken.Spacing.small)
-                            .font(.footnote)
-                            .foregroundStyle(.lgLabelSecondary)
-                        
-                        PlaceholderImageView(width: 80)
-                    }
+                    ThumbnailSection()
                     
-                    VStack(spacing: DesignToken.Spacing.medium) {
-                        HStack {
-                            Text("여행지 *")
-                                .padding(.leading, DesignToken.Spacing.small)
-                                .font(.footnote)
-                                .foregroundStyle(.lgLabelSecondary)
-                            
-                            Spacer()
-                            
-                            Button {
-                                dismiss()
-                            } label: {
-                                Text("여행지 다시 선택하기")
-                                    .foregroundStyle(.lgAccent)
-                                    .font(.footnote)
-                            }
-                        }
-                        
-                        LazyVStack(spacing: DesignToken.Spacing.xxLarge) {
-                            ForEach(selectedPlaces) { place in
-                                PlaceListRow(
-                                    place: place,
-                                    listMode: .draggable,
-                                    rowAction: nil) {
-                                        selectedPlaceForDetails = place
-                                    }
-                                    .sheet(item: $selectedPlaceForDetails) { place in
-                                        Text(place.title)
-                                            .presentationDetents([.fraction(0.4), .large])
-                                    }
-                            }
-                        }
-                        
-                        Spacer()
-                    }
+                    PlaceListSection(selectedPlaces: selectedPlaces)
                 }
                 .padding(.horizontal, DesignToken.Spacing.large)
             }
@@ -85,6 +38,71 @@ struct PlannerComposeView: View {
         .navigationTitle("새로운 여행 만들기")
         .onAppear {
             print("\(selectedPlaces.map { $0.title })")
+        }
+    }
+}
+
+struct PlannerNameSection: View {
+    @Binding var value: String
+    
+    var body: some View {
+        CommonTextField(
+            label: "제목 *",
+            value: $value,
+            prompt: "여행의 제목을 입력하세요"
+        )
+    }
+}
+
+struct ThumbnailSection: View {
+    @State var photoItem: PhotosPickerItem?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignToken.Spacing.medium) {
+            SectionHeader(title: "썸네일")
+            
+            PlaceholderImageView(width: 80)
+        }
+    }
+}
+
+struct PlaceListSection: View {
+    @Environment(\.dismiss) var dismiss
+    
+    let selectedPlaces: [Place]
+    
+    @State var selectedPlaceForDetails: Place?
+    
+    var body: some View {
+        VStack(spacing: DesignToken.Spacing.medium) {
+            HStack {
+                SectionHeader(title: "여행지 *")
+                
+                Spacer()
+                
+                Button {
+                    dismiss()
+                } label: {
+                    SectionButtonLabel(title: "여행지 다시 선택하기")
+                }
+            }
+            
+            LazyVStack(spacing: DesignToken.Spacing.large) {
+                ForEach(selectedPlaces) { place in
+                    PlaceListRow(
+                        place: place,
+                        listMode: .draggable,
+                        rowAction: nil) {
+                            selectedPlaceForDetails = place
+                        }
+                        .sheet(item: $selectedPlaceForDetails) { place in
+                            Text(place.title)
+                                .presentationDetents([.fraction(0.4), .large])
+                        }
+                }
+            }
+            
+            Spacer()
         }
     }
 }
