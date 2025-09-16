@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlannerPlaceListView: View {
     let area: Area
-    @Binding var selectedPlaces: Set<Place>
+    @Binding var selectedPlaces: [Place]
     
     @State var places = [Place]()
     @State var selectedPlaceForDetails: Place?
@@ -23,11 +23,10 @@ struct PlannerPlaceListView: View {
                             PlaceListRow(
                                 place: place,
                                 listMode: .selectable) {
-                                    let isSelected = selectedPlaces.contains(place)
-                                    if !isSelected {
-                                        selectedPlaces.insert(place)
+                                    if let index = selectedPlaces.firstIndex(of: place) {
+                                        selectedPlaces.remove(at: index)
                                     } else {
-                                        selectedPlaces.remove(place)
+                                        selectedPlaces.append(place)
                                     }
                                 } accessoryAction: {
                                     selectedPlaceForDetails = place

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlannerComposeView: View {
-    let selectedPlaces: Set<Place>
+    let selectedPlaces: [Place]
     
     var body: some View {
         Text("\(selectedPlaces.map { $0.title })")
@@ -16,7 +16,5 @@ struct PlannerComposeView: View {
 }
 
 #Preview {
-    PlannerComposeView(selectedPlaces: mockPlaceSet)
+    PlannerComposeView(selectedPlaces: mockPlaceArray)
 }
-
-let mockPlaceSet: Set<Place> = [mockPlace1, mockPlace2]
