@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import NMapsMap
 
 @main
 struct LeaveGoApp: App {
     let persistenceController = PersistenceController.shared
 
+    init() {
+        NMFAuthManager.shared().ncpKeyId = APIKeys.naverMapClientId
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

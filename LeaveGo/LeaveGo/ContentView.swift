@@ -17,7 +17,7 @@ struct ContentView: View {
                     Text("홈")
                 }
             
-            DummyView()
+            MapView()
                 .tabItem {
                     Image(systemName: "map.fill")
                     Text("장소")
