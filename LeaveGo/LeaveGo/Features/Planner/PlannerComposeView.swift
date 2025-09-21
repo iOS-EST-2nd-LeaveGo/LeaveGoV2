@@ -9,11 +9,11 @@ import SwiftUI
 import PhotosUI
 
 struct PlannerComposeView: View {
-    let selectedPlaces: [Place]
+    let selectedPlaces: [PlaceDTO]
     
     @State var plannerTitle = ""
     @State var shouldProceed: Bool = false
-    @State var selectedPlaceForDetails: Place?
+    @State var selectedPlaceForDetails: PlaceDTO?
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -114,9 +114,9 @@ struct ThumbnailSection: View {
 struct PlaceListSection: View {
     @Environment(\.dismiss) var dismiss
     
-    let selectedPlaces: [Place]
+    let selectedPlaces: [PlaceDTO]
     
-    @State var selectedPlaceForDetails: Place?
+    @State var selectedPlaceForDetails: PlaceDTO?
     
     var body: some View {
         VStack(spacing: DesignToken.Spacing.medium) {

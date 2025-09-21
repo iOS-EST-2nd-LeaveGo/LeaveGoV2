@@ -9,10 +9,10 @@ import SwiftUI
 
 struct PlannerPlaceListView: View {
     let area: Area
-    @Binding var selectedPlaces: [Place]
+    @Binding var selectedPlaces: [PlaceDTO]
     
-    @State var places = [Place]()
-    @State var selectedPlaceForDetails: Place?
+    @State var places = [PlaceDTO]()
+    @State var selectedPlaceForDetails: PlaceDTO?
     
     var body: some View {
         VStack {

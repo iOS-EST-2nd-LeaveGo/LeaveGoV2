@@ -10,8 +10,8 @@ import SwiftUI
 struct PlannerView: View {
     @State private var path = NavigationPath()
     
-    //let planners: [Planner] = mockPlanners
-    let planners = [Planner]()
+    //let planners: [PlannerDTO] = mockPlanners
+    let planners = [PlannerDTO]()
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -40,7 +40,7 @@ struct PlannerView: View {
 }
 
 struct PlannerListView: View {
-    var plannerList: [Planner]
+    var plannerList: [PlannerDTO]
     @Binding var path: NavigationPath
     
     var body: some View {

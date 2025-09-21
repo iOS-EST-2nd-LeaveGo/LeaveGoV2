@@ -10,7 +10,7 @@ import SwiftUI
 struct PlannerPlaceSelectionView: View {
     let area: Area
     
-    @State var selectedPlaces = [Place]()
+    @State var selectedPlaces = [PlaceDTO]()
     @State var shouldProceed: Bool = false
     
     var body: some View {
