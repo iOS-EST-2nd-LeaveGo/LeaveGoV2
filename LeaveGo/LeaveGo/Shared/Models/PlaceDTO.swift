@@ -1,5 +1,5 @@
 //
-//  Place.swift
+//  PlaceDTO.swift
 //  LeaveGo
 //
 //  Created by Kitcat Seo on 9/13/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Place: Codable, Hashable, Identifiable {
+struct PlaceDTO: Codable, Hashable, Identifiable {
     /// 주소
     let addr1: String?
     /// 상세주소
@@ -60,7 +60,7 @@ struct Place: Codable, Hashable, Identifiable {
     }
 }
 
-let mockPlace1 = Place(
+let mockPlace1 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -78,7 +78,7 @@ let mockPlace1 = Place(
     title: "광화문"
 )
 
-let mockPlace2 = Place(
+let mockPlace2 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -96,9 +96,9 @@ let mockPlace2 = Place(
     title: "광화문2"
 )
 
-let mockPlaceArray: [Place] = [mockPlace1, mockPlace2, mockPlace3, mockPlace4, mockPlace5, mockPlace6, mockPlace7, mockPlace8]
+let mockPlaceArray: [PlaceDTO] = [mockPlace1, mockPlace2, mockPlace3, mockPlace4, mockPlace5, mockPlace6, mockPlace7, mockPlace8]
 
-let mockPlace3 = Place(
+let mockPlace3 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -116,7 +116,7 @@ let mockPlace3 = Place(
     title: "광화문3"
 )
 
-let mockPlace4 = Place(
+let mockPlace4 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -134,7 +134,7 @@ let mockPlace4 = Place(
     title: "광화문4"
 )
 
-let mockPlace5 = Place(
+let mockPlace5 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -152,7 +152,7 @@ let mockPlace5 = Place(
     title: "광화문5"
 )
 
-let mockPlace6 = Place(
+let mockPlace6 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -170,7 +170,7 @@ let mockPlace6 = Place(
     title: "광화문6"
 )
 
-let mockPlace7 = Place(
+let mockPlace7 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,
@@ -188,7 +188,7 @@ let mockPlace7 = Place(
     title: "광화문7"
 )
 
-let mockPlace8 = Place(
+let mockPlace8 = PlaceDTO(
     addr1: nil,
     addr2: nil,
     areaCode: nil,

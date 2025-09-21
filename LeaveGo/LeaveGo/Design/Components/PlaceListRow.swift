@@ -13,7 +13,7 @@ import SwiftUI
 struct PlaceListRow: View {
     @State var isSelected: Bool = false
     /// 표시할 장소 정보
-    let place: Place
+    let place: PlaceDTO
     /// 리스트 행의 표시 모드
     let listMode: ListMode
     /// (옵셔널) 행이 탭되었을 때 실행할 액션 클로저

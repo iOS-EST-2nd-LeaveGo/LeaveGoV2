@@ -1,5 +1,5 @@
 //
-//  PlannerPlaceListModel.swift
+//  PlannerPlaceListDTO.swift
 //  LeaveGo
 //
 //  Created by Kitcat Seo on 6/14/25.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-class PlannerPlaceListModel {
+struct PlannerPlaceListDTO {
     let area: Area
     let places: [PlannerPlace?]
     
-    class PlannerPlace {
+    struct PlannerPlace {
         let title: String
         let contentId: Int
         let contentTypeId: Int?
