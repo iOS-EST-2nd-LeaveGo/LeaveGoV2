@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PlannerAreaSelectionView: View {
     @State private var selectedArea: Area?
+    @State private var shouldProceed = false
     
     private let availableAreas: [Area] = Area.allCases
     
@@ -29,17 +30,24 @@ struct PlannerAreaSelectionView: View {
                         }
                     }
                 }
+                .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
             }
             .padding(.horizontal, DesignToken.Spacing.large)
             
             BottomActionButton(
                 title: "다음",
                 isEnabled: selectedArea != nil) {
-                    print(selectedArea!)
+                    shouldProceed = true
                 }
         }
         .navigationTitle("여행 지역 선택하기")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(
+            isPresented: $shouldProceed) {
+                if let selectedArea {
+                    PlannerPlaceSelectionView(area: selectedArea)
+                }
+            }
     }
 }
 
