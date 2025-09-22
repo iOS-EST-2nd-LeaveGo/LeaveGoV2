@@ -14,10 +14,17 @@ struct APIKeys {
             return clientId
         }
         
-        #if DEBUG
+#if DEBUG
+        print("⚠️ [APIKeys] Naver Map Client ID not found or not configured")
+        print("   [APIKeys] Please check:")
+        print("   1. Secrets.xcconfig file exists")
+        print("   2. Configuration is properly linked")
+        print("   3. Info.plist contains NMFClientId key")
         return ""
-        #else
-        fatalError("Production build requires proper configuration")
-        #endif
+#else
+        print("❌ [Production] Naver Map Client ID not configured")
+        print("   [Production] Check configuration files and rebuild")
+        return ""
+#endif
     }
 }
