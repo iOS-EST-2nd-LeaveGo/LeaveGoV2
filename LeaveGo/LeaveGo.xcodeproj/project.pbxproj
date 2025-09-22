@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4BB472822E7F11D400E4EFCA /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 4BB472812E7F11D400E4EFCA /* NMapsMap */; };
+		4BB472862E7F150900E4EFCA /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */; };
 		60F8FF022E77FB4C00078516 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 60F8FF012E77FB4C00078516 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
@@ -28,14 +30,33 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4BB472852E7F150900E4EFCA /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		7FC379C52E69829A00899B41 /* LeaveGo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeaveGo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FC379D72E69829B00899B41 /* LeaveGoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeaveGoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FC379E12E69829B00899B41 /* LeaveGoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeaveGoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4BB472882E7F15A200E4EFCA /* Exceptions for "LeaveGo" folder in "LeaveGo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7FC379C42E69829A00899B41 /* LeaveGo */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4BB472842E7F12D100E4EFCA /* Resource */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resource;
+			sourceTree = "<group>";
+		};
 		7FC379C72E69829A00899B41 /* LeaveGo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4BB472882E7F15A200E4EFCA /* Exceptions for "LeaveGo" folder in "LeaveGo" target */,
+			);
 			path = LeaveGo;
 			sourceTree = "<group>";
 		};
@@ -57,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60F8FF022E77FB4C00078516 /* ComposableArchitecture in Frameworks */,
+				4BB472822E7F11D400E4EFCA /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,12 +99,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4BB472802E7F11D400E4EFCA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7FC379BC2E69829A00899B41 = {
 			isa = PBXGroup;
 			children = (
+				4BB472852E7F150900E4EFCA /* Secrets.xcconfig */,
+				4BB472842E7F12D100E4EFCA /* Resource */,
 				7FC379C72E69829A00899B41 /* LeaveGo */,
 				7FC379DA2E69829B00899B41 /* LeaveGoTests */,
 				7FC379E42E69829B00899B41 /* LeaveGoUITests */,
+				4BB472802E7F11D400E4EFCA /* Frameworks */,
 				7FC379C62E69829A00899B41 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,11 +145,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				4BB472842E7F12D100E4EFCA /* Resource */,
 				7FC379C72E69829A00899B41 /* LeaveGo */,
 			);
 			name = LeaveGo;
 			packageProductDependencies = (
 				60F8FF012E77FB4C00078516 /* ComposableArchitecture */,
+				4BB472812E7F11D400E4EFCA /* NMapsMap */,
 			);
 			productName = LeaveGo;
 			productReference = 7FC379C52E69829A00899B41 /* LeaveGo.app */;
@@ -203,6 +237,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				4BB4727F2E7F11CC00E4EFCA /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FC379C62E69829A00899B41 /* Products */;
@@ -221,6 +256,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BB472862E7F150900E4EFCA /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,8 +316,7 @@
 /* Begin XCBuildConfiguration section */
 		7FC379E92E69829B00899B41 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 7FC379C72E69829A00899B41 /* LeaveGo */;
-			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			baseConfigurationReference = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -346,8 +381,7 @@
 		};
 		7FC379EA2E69829B00899B41 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 7FC379C72E69829A00899B41 /* LeaveGo */;
-			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			baseConfigurationReference = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -405,16 +439,16 @@
 		};
 		7FC379EC2E69829B00899B41 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 7FC379C72E69829A00899B41 /* LeaveGo */;
-			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			baseConfigurationReference = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = lgAccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RKLR3WUKA4;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LeaveGo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -435,16 +469,16 @@
 		};
 		7FC379ED2E69829B00899B41 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 7FC379C72E69829A00899B41 /* LeaveGo */;
-			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			baseConfigurationReference = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = lgAccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RKLR3WUKA4;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LeaveGo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -577,6 +611,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4BB4727F2E7F11CC00E4EFCA /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.22.1;
+			};
+		};
 		60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
@@ -588,6 +630,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4BB472812E7F11D400E4EFCA /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BB4727F2E7F11CC00E4EFCA /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
+		};
 		60F8FF012E77FB4C00078516 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
