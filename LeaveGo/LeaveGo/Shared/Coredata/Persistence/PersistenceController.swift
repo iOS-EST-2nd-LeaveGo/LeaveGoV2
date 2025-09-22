@@ -17,33 +17,32 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
 
         // 샘플데이터 삽입
-//        let calendar = Calendar.current
-//        let today = Date()
-//
-//        for p in 0..<3 {
-//            let calendar = Calendar.current
-//
-//            let planner = Planner(context: viewContext)
-//
-//            planner.id = UUID()
-//            planner.title = "샘플 플래너 \(p + 1)"
-//            planner.createAt = today
-//            planner.startDate = today
-//            planner.endDate = calendar.date(byAdding: .day, value: 7, to: today) ?? today
-//
-//            for i in 0..<3 {
-//                let place = PlannerPlace(context: viewContext)
-//                place.id = UUID()
-//                place.title = "장소 \(i + 1) - P\(p + 1)"
-//                place.contentID = "content-\(p+1)-\(i+1)"
-//                place.createAt = today
-//                place.date = calendar.date(byAdding: .day, value: i, to: today) ?? today
-//                place.order = Int16(i)
-//
-//                place.planner = planner
-//                planner.addToPlaces(place)
-//            }
-//        }
+        let calendar = Calendar.current
+        let today = Date()
+
+        for p in 0..<3 {
+            let calendar = Calendar.current
+
+            let planner = Planner(context: viewContext)
+
+            planner.id = UUID()
+            planner.title = "샘플 플래너 \(p + 1)"
+            planner.createAt = today
+            planner.startDate = today
+            planner.endDate = calendar.date(byAdding: .day, value: 7, to: today) ?? today
+
+            for i in 0..<3 {
+                let place = PlannerPlace(context: viewContext)
+                place.id = UUID()
+                place.title = "장소 \(i + 1) - P\(p + 1)"
+                place.contentID = "content-\(p+1)-\(i+1)"
+                place.createAt = today
+                place.date = calendar.date(byAdding: .day, value: i, to: today) ?? today
+                place.order = Int16(i)
+
+                place.planner = planner
+            }
+        }
 
         do {
             try viewContext.save()

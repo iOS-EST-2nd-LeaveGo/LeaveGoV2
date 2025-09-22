@@ -17,7 +17,7 @@ protocol PlannerRepositoryType {
     func deletePlanner(_ id: NSManagedObjectID) async throws
 
     // Place
-    func addPlace(to plannerID: NSManagedObjectID, _ dto: PlaceDTO) async throws -> NSManagedObjectID
-    func updatePlace(_ placeID: NSManagedObjectID, _ dto: PlaceDTO) async throws
+    func addPlace(to plannerID: NSManagedObjectID, _ dto: PlannerPlaceDTO) async throws -> NSManagedObjectID
+    func updatePlace(_ placeID: NSManagedObjectID, _ dto: PlannerPlaceDTO) async throws
     func deletePlace(_ placeID: NSManagedObjectID) async throws
 }

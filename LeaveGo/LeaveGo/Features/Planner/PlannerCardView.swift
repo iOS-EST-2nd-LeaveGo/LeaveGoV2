@@ -13,7 +13,7 @@ struct PlannerCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let planner {
-                PlannerThumbnailView(imageName: planner.thumbnailPath)
+                PlannerThumbnailView(imageName: planner.thumbnail)
                     .frame(minHeight: 160)
                     .clipped()
                 
