@@ -47,10 +47,10 @@ final class PlannerRepository: PlannerRepositoryType {
                      throw PlannerRepositoryError.plannerNotFound
             }
             
-            planner.title = dto.title
             planner.startDate = dto.startDate
             planner.endDate = dto.endDate
 
+            if let title = dto.title { planner.title = title}
             if let thumbnail = dto.thumbnail { planner.thumbnail = thumbnail }
 
             do {
