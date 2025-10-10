@@ -51,7 +51,8 @@ final class BookmarkRepository: BookmarkRepositoryType {
                 throw BookmarkRepositoryError.bookmarkNotFound
             }
 
-            if let title = dto.title { bookmark.title = title }
+            bookmark.title = dto.title
+            
             if let thumbnail = dto.thumbnail { bookmark.thumbnail = thumbnail }
 
             do {

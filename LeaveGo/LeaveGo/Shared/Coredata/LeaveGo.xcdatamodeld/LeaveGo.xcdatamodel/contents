@@ -4,7 +4,7 @@
         <attribute name="contentID" attributeType="String"/>
         <attribute name="createAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="thumbnail" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
     </entity>
     <entity name="Planner" representedClassName=".Planner" syncable="YES" codeGenerationType="class">
         <attribute name="createAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -12,8 +12,8 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="thumbnail" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="places" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlannerPlace" inverseName="planner" inverseEntity="PlannerPlace"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="places" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlannerPlace" inverseName="planner" inverseEntity="PlannerPlace"/>
     </entity>
     <entity name="PlannerPlace" representedClassName=".PlannerPlace" syncable="YES" codeGenerationType="class">
         <attribute name="contentID" attributeType="String"/>
@@ -22,7 +22,7 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="thumbnail" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
         <relationship name="planner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Planner" inverseName="places" inverseEntity="Planner"/>
     </entity>
 </model>

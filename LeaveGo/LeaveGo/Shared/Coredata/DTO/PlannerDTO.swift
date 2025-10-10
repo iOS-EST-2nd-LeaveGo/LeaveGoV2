@@ -9,11 +9,11 @@ import Foundation
 
 struct PlannerDTO: Identifiable {
     let id: UUID
-    let title: String?
+    let title: String
     let startDate: Date
     let endDate: Date
     let thumbnail: String?
-    let placeList: [PlannerPlaceListDTO]?
+    let placeList: [PlannerPlaceListDTO]? // 나중에 수정 필요
 }
 
 // 더미 데이터

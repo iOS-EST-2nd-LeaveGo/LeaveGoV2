@@ -8,10 +8,11 @@
 import Foundation
 
 struct PlannerPlaceDTO {
-    var title: String?
-    var contentID: String
-    var thumbnail: String?
-    var date: Date
-    var order: Int16
+    let id: UUID
+    let title: String
+    let contentID: String
+    let thumbnail: String?
+    let date: Date
+    let order: Int16
 }
 
