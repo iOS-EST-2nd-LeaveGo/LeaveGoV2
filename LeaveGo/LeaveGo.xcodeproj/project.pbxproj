@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4BB472822E7F11D400E4EFCA /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 4BB472812E7F11D400E4EFCA /* NMapsMap */; };
 		4BB472862E7F150900E4EFCA /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4BB472852E7F150900E4EFCA /* Secrets.xcconfig */; };
-		60F8FF022E77FB4C00078516 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 60F8FF012E77FB4C00078516 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,7 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60F8FF022E77FB4C00078516 /* ComposableArchitecture in Frameworks */,
 				4BB472822E7F11D400E4EFCA /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,7 +148,6 @@
 			);
 			name = LeaveGo;
 			packageProductDependencies = (
-				60F8FF012E77FB4C00078516 /* ComposableArchitecture */,
 				4BB472812E7F11D400E4EFCA /* NMapsMap */,
 			);
 			productName = LeaveGo;
@@ -236,7 +233,6 @@
 			mainGroup = 7FC379BC2E69829A00899B41;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				4BB4727F2E7F11CC00E4EFCA /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -619,14 +615,6 @@
 				minimumVersion = 3.22.1;
 			};
 		};
-		60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.22.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -634,11 +622,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4BB4727F2E7F11CC00E4EFCA /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
-		};
-		60F8FF012E77FB4C00078516 /* ComposableArchitecture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 60F8FF002E77FB4C00078516 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
