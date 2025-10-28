@@ -10,14 +10,14 @@ import SwiftUI
 struct PlannerView: View {
     @State private var path = NavigationPath()
     
-    //let planners: [PlannerDTO] = mockPlanners
-    let planners = [PlannerDTO]()
+    @FetchRequest(sortDescriptors: [SortDescriptor(\Planner.title, order: .reverse)])
+    private var planners: FetchedResults<Planner>
     
     var body: some View {
         NavigationStack(path: $path) {
             VStack {
                 if !planners.isEmpty {
-                    PlannerListView(plannerList: planners, path: $path)
+                    PlannerListView(plannerList: planners.map { $0.toDTO() }, path: $path)
                 } else {
                     PlannerPlaceholderView(path: $path)
                 }
@@ -35,19 +35,16 @@ struct PlannerView: View {
     }
 }
 
-#Preview {
-    PlannerView()
-}
-
 struct PlannerListView: View {
     var plannerList: [PlannerDTO]
     @Binding var path: NavigationPath
     
+    let columns = [
+        GridItem(.flexible(), spacing: DesignToken.Spacing.large),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
-        let columns = [
-            GridItem(.flexible(), spacing: DesignToken.Spacing.large),
-            GridItem(.flexible())
-        ]
         
         ScrollView {
             LazyVGrid(columns: columns, spacing: DesignToken.Spacing.large) {
@@ -85,4 +82,8 @@ struct PlannerPlaceholderView: View {
             .padding(.horizontal, DesignToken.Spacing.large)
         }
     }
+}
+
+#Preview {
+    PlannerView()
 }
