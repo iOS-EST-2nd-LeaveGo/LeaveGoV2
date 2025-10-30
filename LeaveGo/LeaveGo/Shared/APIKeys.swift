@@ -27,4 +27,11 @@ struct APIKeys {
         return ""
 #endif
     }
+    
+    static var tourAPI: String? {
+        if let key = Bundle.main.object(forInfoDictionaryKey: "TourAPIServiceKey") as? String, !key.isEmpty {
+            return key
+        }
+        return nil
+    }
 }
