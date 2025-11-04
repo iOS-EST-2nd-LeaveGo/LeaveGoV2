@@ -34,6 +34,8 @@ final class NetworkManager: NetworkService {
             request.url = urlComponents.url
         }
         
+        print("🌐 NetworkManager: \(request.url?.absoluteString ?? "")")
+        
         let (data, response) = try await session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -51,8 +53,8 @@ final class NetworkManager: NetworkService {
             let decoder = JSONDecoder()
             return try decoder.decode(type, from: data)
         } catch {
-            print(NetworkError.decodingFailed(error.localizedDescription))
-            throw NetworkError.decodingFailed(error.localizedDescription)
+            print(NetworkError.decodingFailed("\(type)").localizedDescription)
+            throw NetworkError.decodingFailed("\(type)")
         }
     }
     
