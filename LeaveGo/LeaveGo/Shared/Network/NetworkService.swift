@@ -9,5 +9,5 @@ import SwiftUI
 
 protocol NetworkService {
     func fetch(from endpoint: Endpoint) async throws -> Data
-    func decode<T: Codable>(data: Data) throws -> T
+    func decode<T: Codable>(data: Data, type: T.Type) throws -> T?
 }

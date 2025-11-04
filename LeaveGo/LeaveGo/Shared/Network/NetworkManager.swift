@@ -46,10 +46,10 @@ final class NetworkManager: NetworkService {
         return data
     }
     
-    func decode<T: Codable>(data: Data) throws -> T {
+    func decode<T: Codable>(data: Data, type: T.Type) throws -> T? {
         do {
             let decoder = JSONDecoder()
-            return try decoder.decode(T.self, from: data)
+            return try decoder.decode(type, from: data)
         } catch {
             print(NetworkError.decodingFailed(error.localizedDescription))
             throw NetworkError.decodingFailed(error.localizedDescription)
