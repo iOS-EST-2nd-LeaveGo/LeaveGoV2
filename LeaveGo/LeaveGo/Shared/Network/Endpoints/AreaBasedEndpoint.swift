@@ -13,6 +13,7 @@ struct AreaBasedEndpoint: Endpoint {
     let method: HTTPMethod = .get
     var parameters: [String : Any]?
     
+    let contentTypeId: Int = 12
     let page: Int
     let numOfRows: Int
     let area: Area
@@ -23,9 +24,9 @@ struct AreaBasedEndpoint: Endpoint {
         self.area = area
         
         var parameters = defaultParameters
-        parameters["page"] = page
+        parameters["pageNo"] = page
         parameters["numOfRows"] = numOfRows
-        parameters["area"] = area
+        parameters["areaCode"] = area.code
         self.parameters = parameters
     }
 }

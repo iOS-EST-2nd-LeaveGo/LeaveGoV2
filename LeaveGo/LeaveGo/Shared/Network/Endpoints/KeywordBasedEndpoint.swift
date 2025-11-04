@@ -23,7 +23,7 @@ struct KeywordBasedEndpoint: Endpoint {
         self.keyword = keyword
         
         var parameters = defaultParameters
-        parameters["page"] = page
+        parameters["pageNo"] = page
         parameters["numOfRows"] = numOfRows
         parameters["keyword"] = keyword
         self.parameters = parameters

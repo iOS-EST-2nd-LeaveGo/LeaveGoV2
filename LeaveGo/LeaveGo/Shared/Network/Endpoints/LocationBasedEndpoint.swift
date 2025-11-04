@@ -31,7 +31,7 @@ struct LocationBasedEndpoint: Endpoint {
         self.arrange = arrange
         
         var parameters = defaultParameters
-        parameters["page"] = page
+        parameters["pageNo"] = page
         parameters["numOfRows"] = numOfRows
         parameters["mapX"] = mapX
         parameters["mapY"] = mapY
