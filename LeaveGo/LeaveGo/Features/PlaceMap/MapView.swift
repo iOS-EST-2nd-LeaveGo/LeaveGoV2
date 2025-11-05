@@ -98,6 +98,13 @@ struct NaverMapView: UIViewRepresentable {
         view.showLocationButton = true
         view.showCompass = true
         
+        let locationOverlay = view.mapView.locationOverlay
+        locationOverlay.icon = NMFOverlayImage(name: "img_userLocation")
+        locationOverlay.iconWidth = 25
+        locationOverlay.iconHeight = 25
+        locationOverlay.anchor = CGPoint(x: 0, y: 0)
+        locationOverlay.circleRadius = 0
+        
         let cameraPosition = NMFCameraPosition(NMGLatLng(lat: coord.latitude,
                                                          lng: coord.longitude),
                                                zoom: 17)
@@ -115,38 +122,15 @@ struct NaverMapView: UIViewRepresentable {
         cameraUpdate.animationDuration = 0.5
         
         uiView.mapView.moveCamera(cameraUpdate)
-        
-        context.coordinator.updateUserLocationMarker(on: uiView.mapView,
-                                                     at: nmgCoord)
     }
 }
 
 // MARK: - Coordinator
 class Coordinator: NSObject, NMFMapViewCameraDelegate {
     var parent: NaverMapView
-    var userLocationMarker: NMFMarker?
     
     init(parent: NaverMapView) {
         self.parent = parent
-    }
-    
-    func updateUserLocationMarker(on mapView: NMFMapView, at coord: NMGLatLng) {
-        if let existingMarker = userLocationMarker {
-            existingMarker.mapView = nil
-        }
-        
-        let marker = NMFMarker()
-        marker.position = coord
-        marker.mapView = mapView
-        
-        marker.iconImage = NMFOverlayImage(name: "img_userAnnotation")
-        
-        marker.width = 25
-        marker.height = 25*1.44
-        marker.anchor = CGPoint(x: 0.5, y: 0.63)
-        marker.iconTintColor = UIColor.systemBlue
-        
-        userLocationMarker = marker
     }
     
     func mapViewDidFinishLoadingMap() {
