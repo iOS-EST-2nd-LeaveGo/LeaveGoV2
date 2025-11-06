@@ -36,7 +36,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4BB472882E7F15A200E4EFCA /* Exceptions for "LeaveGo" folder in "LeaveGo" target */ = {
+		4B14642D2EBC66ED007C2718 /* Exceptions for "LeaveGo" folder in "LeaveGo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -54,7 +54,7 @@
 		7FC379C72E69829A00899B41 /* LeaveGo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				4BB472882E7F15A200E4EFCA /* Exceptions for "LeaveGo" folder in "LeaveGo" target */,
+				4B14642D2EBC66ED007C2718 /* Exceptions for "LeaveGo" folder in "LeaveGo" target */,
 			);
 			path = LeaveGo;
 			sourceTree = "<group>";

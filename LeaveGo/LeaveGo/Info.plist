@@ -4,5 +4,9 @@
 <dict>
 	<key>NMFClientId</key>
 	<string>$(NAVER_MAP_CLIENT_ID)</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>앱이 사용 중일 때 위치 정보가 필요합니다.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>앱이 백그라운드에서도 위치 정보가 필요합니다.</string>
 </dict>
 </plist>

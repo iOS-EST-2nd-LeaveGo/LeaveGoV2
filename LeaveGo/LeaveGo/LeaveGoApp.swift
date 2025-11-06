@@ -14,6 +14,7 @@ struct LeaveGoApp: App {
 
     init() {
         NMFAuthManager.shared().ncpKeyId = APIKeys.naverMapClientId
+        LocationManager.shared.requestLocationPermission()
     }
     
     var body: some Scene {
