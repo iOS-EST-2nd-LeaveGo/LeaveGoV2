@@ -35,6 +35,16 @@
 		7FC379E12E69829B00899B41 /* LeaveGoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeaveGoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4B14642D2EBC66ED007C2718 /* Exceptions for "LeaveGo" folder in "LeaveGo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7FC379C42E69829A00899B41 /* LeaveGo */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4BB472842E7F12D100E4EFCA /* Resource */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -43,6 +53,9 @@
 		};
 		7FC379C72E69829A00899B41 /* LeaveGo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4B14642D2EBC66ED007C2718 /* Exceptions for "LeaveGo" folder in "LeaveGo" target */,
+			);
 			path = LeaveGo;
 			sourceTree = "<group>";
 		};
