@@ -7,28 +7,28 @@
 
 import Foundation
 
-struct TourResponseRoot<T: Codable>: Codable {
+struct TourResponseRoot<T: Decodable>: Decodable {
     let response: TourResponse<T>
 }
 
-struct TourResponse<T: Codable>: Codable {
+struct TourResponse<T: Decodable>: Decodable {
     let header: TourResponseHeader
     let body: TourResponseBody<T>
 }
 
-struct TourResponseHeader: Codable {
+struct TourResponseHeader: Decodable {
     let resultCode: String
     let resultMsg: String
 }
 
-struct TourResponseBody<T: Codable>: Codable {
+struct TourResponseBody<T: Decodable>: Decodable {
     let items: TourContent<T>
     let numOfRows: Int
     let pageNo: Int
     let totalCount: Int
 }
 
-struct TourContent<T: Codable>: Codable {
+struct TourContent<T: Decodable>: Decodable {
     let content: [T]
 
     init(from decoder: Decoder) throws {

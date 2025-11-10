@@ -13,16 +13,16 @@ struct PlaceDetailEndpoint: Endpoint {
     let method: HTTPMethod = .get
     var parameters: [String : Any]?
     
-    let contentTypeId: String
-    let contentId: String
+    let contentType: ContentType
+    let contentID: String
     
-    init(contentTypeId: String, contentId: String) {
-        self.contentTypeId = contentTypeId
-        self.contentId = contentId
+    init(contentType: ContentType, contentID: String) {
+        self.contentType = contentType
+        self.contentID = contentID
         
         var parameters = defaultParameters
-        parameters["contentTypeId"] = contentTypeId
-        parameters["contentId"] = contentId
+        parameters["contentTypeId"] = contentType.rawValue
+        parameters["contentId"] = contentID
         self.parameters = parameters
     }
 }

@@ -18,16 +18,16 @@ struct LocationBasedEndpoint: Endpoint {
     let mapX: Double
     let mapY: Double
     let radius: Int
-    let contentTypeId: Int?
+    let contentType: ContentType
     let arrange: String
     
-    init(page: Int, numOfRows: Int, mapX: Double, mapY: Double, radius: Int, contentTypeId: Int?, arrange: String) {
+    init(page: Int, numOfRows: Int, mapX: Double, mapY: Double, radius: Int, contentType: ContentType, arrange: String) {
         self.page = page
         self.numOfRows = numOfRows
         self.mapX = mapX
         self.mapY = mapY
         self.radius = radius
-        self.contentTypeId = contentTypeId
+        self.contentType = contentType
         self.arrange = arrange
         
         var parameters = defaultParameters
@@ -36,7 +36,7 @@ struct LocationBasedEndpoint: Endpoint {
         parameters["mapX"] = mapX
         parameters["mapY"] = mapY
         parameters["radius"] = radius
-        parameters["contentTypeId"] = contentTypeId
+        parameters["contentTypeId"] = contentType.rawValue
         parameters["arrange"] = arrange
         self.parameters = parameters
     }

@@ -107,7 +107,23 @@ struct TrailingAccessoryButton: View {
 
 #Preview {
     PlaceListRow(
-        place: mockPlace1,
+        place: PlaceDTO(
+            addr1: nil,
+            addr2: nil,
+            areaCode: nil,
+            cat1: "A01",
+            cat2: nil,
+            cat3: nil,
+            id: "11",
+            contentTypeID: "11",
+            dist: nil,
+            bigThumbnailImage: nil,
+            thumbnailImage: nil,
+            mapX: nil,
+            mapY: nil,
+            tel: nil,
+            title: "광화문"
+        ),
         listMode: .selectable,
         rowAction: nil,
         accessoryAction: nil
