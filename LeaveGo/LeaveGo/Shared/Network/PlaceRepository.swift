@@ -33,4 +33,22 @@ final class PlaceRepository {
         }
         return nil
     }
+    
+    func fetchPlaceDetail(with endpoint: PlaceDetailEndpoint) async throws -> PlaceDetailDTO? {
+        do {
+            let rawData = try await networkManager.fetch(from: endpoint)
+            
+            if let data = try networkManager.decode(data: rawData, type: TourResponseRoot<PlaceDetailDTO>.self) {
+                if data.response.body.totalCount != 0,
+                   let placeDetail = data.response.body.items.content.first {
+                    return placeDetail.htmlCleaned()
+                } else {
+                    print("🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
+                }
+            }
+        } catch {
+            print(error)
+        }
+        return nil
+    }
 }
