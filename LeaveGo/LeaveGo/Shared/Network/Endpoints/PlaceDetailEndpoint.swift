@@ -9,7 +9,7 @@ import Foundation
 
 struct PlaceDetailEndpoint: Endpoint {
     var apiType: APIType = .tour
-    let path: String = "/detailIntro2"
+    let path: String = "detailIntro2"
     let method: HTTPMethod = .get
     var parameters: [String : Any]?
     

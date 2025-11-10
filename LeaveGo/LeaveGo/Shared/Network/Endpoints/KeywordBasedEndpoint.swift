@@ -9,7 +9,7 @@ import Foundation
 
 struct KeywordBasedEndpoint: Endpoint {
     var apiType: APIType = .tour
-    let path: String = "/searchKeyword2"
+    let path: String = "searchKeyword2"
     let method: HTTPMethod = .get
     var parameters: [String : Any]?
     
