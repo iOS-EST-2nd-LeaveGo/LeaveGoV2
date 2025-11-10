@@ -7,14 +7,20 @@
 
 import Foundation
 
+/// NetworkService 프로토콜을 구현한 구체적인 네트워크 매니저 클래스
 final class NetworkManager: NetworkService {
+    /// 싱글톤 인스턴스
     static let shared = NetworkManager()
+
+    /// URLSession 인스턴스
     private let session: URLSession
-    
+
+    /// NetworkManager 초기화 (private - 싱글톤 패턴)
+    /// - Parameter session: URLSession 인스턴스 (기본값: .shared)
     private init(session: URLSession = .shared) {
         self.session = session
     }
-    
+
     func fetch(from endpoint: Endpoint) async throws -> Data {
         guard let apiKey = APIKeys.tourAPI else {
             print(NetworkError.invalidAPIKey.localizedDescription)
@@ -33,8 +39,6 @@ final class NetworkManager: NetworkService {
             urlComponents.queryItems = queryItems
             request.url = urlComponents.url
         }
-        
-        print("🌐 NetworkManager: \(request.url?.absoluteString ?? "")")
         
         let (data, response) = try await session.data(for: request)
         
@@ -58,6 +62,9 @@ final class NetworkManager: NetworkService {
         }
     }
     
+    /// HTTP 응답의 상태 코드를 검증하는 private 메서드
+    /// - Parameter response: 검증할 HTTP 응답
+    /// - Throws: 상태 코드에 따른 적절한 NetworkError
     private func validateResponse(_ response: HTTPURLResponse) throws {
         switch response.statusCode {
         case 200...299:

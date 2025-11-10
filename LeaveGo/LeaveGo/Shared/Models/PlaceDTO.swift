@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// 장소 기본 정보를 담는 데이터 전송 객체
+/// 한국관광공사 API의 지역기반관광정보조회 및 위치기반관광정보조회에서 사용
 struct PlaceDTO: Codable, Hashable, Identifiable {
     /// 주소
     let addr1: String?
@@ -38,7 +40,9 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
     let tel: String?
     /// 장소명
     let title: String
-    
+
+    /// JSON 키 매핑을 위한 CodingKeys
+    /// API 응답의 키명과 Swift 프로퍼티명을 매핑
     enum CodingKeys: String, CodingKey {
         case addr1
         case addr2

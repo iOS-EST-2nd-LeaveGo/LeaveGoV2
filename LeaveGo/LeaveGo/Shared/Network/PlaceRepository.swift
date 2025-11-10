@@ -7,13 +7,21 @@
 
 import SwiftUI
 
+/// 장소 관련 데이터 접근을 담당하는 Repository 클래스
 final class PlaceRepository {
+    /// 네트워크 통신을 담당하는 서비스
     private let networkManager: NetworkService
-    
+
+    /// PlaceRepository 초기화
+    /// - Parameter networkManager: 네트워크 서비스 인스턴스 (기본값: NetworkManager.shared)
     init(networkManager: NetworkService = NetworkManager.shared) {
         self.networkManager = networkManager
     }
-    
+
+    /// 장소 목록을 가져오는 메서드
+    /// - Parameter endpoint: API 엔드포인트 정보
+    /// - Returns: 장소 목록과 총 개수를 포함한 튜플, 데이터가 없으면 nil
+    /// - Throws: 네트워크 또는 디코딩 에러
     func fetchPlaceList(with endpoint: Endpoint) async throws -> (placeList: [PlaceDTO], totalCount: Int)? {
         do {
             let rawData = try await networkManager.fetch(from: endpoint)
@@ -34,6 +42,10 @@ final class PlaceRepository {
         return nil
     }
     
+    /// 특정 장소의 상세 정보를 가져오는 메서드
+    /// - Parameter endpoint: 장소 상세 정보 API 엔드포인트
+    /// - Returns: 장소 상세 정보 DTO, 데이터가 없으면 nil
+    /// - Throws: 네트워크 에러, 디코드 에러는
     func fetchPlaceDetail(with endpoint: PlaceDetailEndpoint) async throws -> PlaceDetailDTO? {
         do {
             let rawData = try await networkManager.fetch(from: endpoint)

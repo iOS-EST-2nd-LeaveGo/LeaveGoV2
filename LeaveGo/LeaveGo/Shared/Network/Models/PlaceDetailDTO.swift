@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// 장소 상세 정보를 담는 데이터 전송 객체
+/// - Note: 다양한 ContentType(관광지, 문화시설, 레저스포츠, 쇼핑, 음식점)의 데이터를 통합 처리
 struct PlaceDetailDTO: Decodable {
     /// 장소 고유번호
     let contentID: String
@@ -24,7 +26,9 @@ struct PlaceDetailDTO: Decodable {
     let duration: String?
     /// 놀이방 여부
     let kidsFacility: String?
-    
+
+    /// contentTypeID 문자열을 ContentType enum으로 변환하는 계산 프로퍼티
+    /// - Returns: 해당하는 ContentType, 알 수 없는 타입은 .touristAttraction으로 기본값 처리
     var contentType: ContentType {
         switch contentTypeID {
         case "12": .touristAttraction
@@ -35,7 +39,9 @@ struct PlaceDetailDTO: Decodable {
         default: .touristAttraction
         }
     }
-    
+
+    /// JSON 키 매핑을 위한 CodingKeys
+    /// ContentType별로 서로 다른 API 키들을 정의
     enum CodingKeys: String, CodingKey {
         case contentTypeID = "contenttypeid"
         case contentID = "contentid"
@@ -73,6 +79,10 @@ struct PlaceDetailDTO: Decodable {
         case parkingFood = "parkingfood"
     }
 
+    /// 커스텀 디코딩 초기화
+    /// ContentType에 따라 다른 JSON 키에서 데이터를 가져와 통합된 프로퍼티에 할당
+    /// - Parameter decoder: JSON 디코더
+    /// - Throws: 디코딩 에러
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -125,7 +135,10 @@ struct PlaceDetailDTO: Decodable {
             parking = try container.decodeIfPresent(String.self, forKey: .parking)
         }
     }
-    
+
+    /// HTML 태그를 제거한 정제된 PlaceDetailDTO를 반환
+    /// infoCenter, openTime, restDate 필드의 HTML 태그를 평문으로 변환
+    /// - Returns: HTML 태그가 제거된 PlaceDetailDTO 복사본
     func htmlCleaned() -> PlaceDetailDTO {
         var copy = self
         copy.infoCenter = infoCenter?.htmlToPlainText
