@@ -139,11 +139,13 @@ struct PlaceDetailDTO: Decodable {
     /// HTML 태그를 제거한 정제된 PlaceDetailDTO를 반환
     /// infoCenter, openTime, restDate 필드의 HTML 태그를 평문으로 변환
     /// - Returns: HTML 태그가 제거된 PlaceDetailDTO 복사본
-    func htmlCleaned() -> PlaceDetailDTO {
+    func htmlCleaned() async -> PlaceDetailDTO {
         var copy = self
-        copy.infoCenter = infoCenter?.htmlToPlainText
-        copy.openTime = openTime?.htmlToPlainText
-        copy.restDate = restDate?.htmlToPlainText
+
+        copy.infoCenter = await infoCenter?.htmlToPlainText()
+        copy.openTime = await openTime?.htmlToPlainText()
+        copy.restDate = await restDate?.htmlToPlainText()
+
         return copy
     }
 }

@@ -11,18 +11,20 @@ import Foundation
 extension String {
     /// HTML 형식의 문자열을 NSAttributedString을 이용해 일반 문자열로 변환합니다.
     /// <p> 등의 태그가 포함된 응답 값을 정제할 때 사용
-    var htmlToPlainText: String {
-        guard let data = self.data(using: .utf8) else { return self }
-        if let attributedString = try? NSAttributedString(
-            data: data,
-            options: [
-                .documentType: NSAttributedString.DocumentType.html,
-                .characterEncoding: String.Encoding.utf8.rawValue
-            ],
-            documentAttributes: nil
-        ) {
-            return attributedString.string
-        }
-        return self
+    func htmlToPlainText() async -> String {
+        return await Task.detached {
+            guard let data = self.data(using: .utf8) else { return self }
+            if let attributedString = try? NSAttributedString(
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue
+                ],
+                documentAttributes: nil
+            ) {
+                return attributedString.string
+            }
+            return self
+        }.value
     }
 }

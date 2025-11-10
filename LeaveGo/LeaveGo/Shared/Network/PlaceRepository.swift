@@ -53,7 +53,7 @@ final class PlaceRepository {
             if let data = try networkManager.decode(data: rawData, type: TourResponseRoot<PlaceDetailDTO>.self) {
                 if data.response.body.totalCount != 0,
                    let placeDetail = data.response.body.items.content.first {
-                    return placeDetail.htmlCleaned()
+                    return await placeDetail.htmlCleaned()
                 } else {
                     print("🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
                 }
