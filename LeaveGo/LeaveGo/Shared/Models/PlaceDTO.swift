@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// 장소 기본 정보를 담는 데이터 전송 객체
+/// 한국관광공사 API의 지역기반관광정보조회 및 위치기반관광정보조회에서 사용
 struct PlaceDTO: Codable, Hashable, Identifiable {
     /// 주소
     let addr1: String?
@@ -23,7 +25,7 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
     /// 장소 고유번호
     let id: String
     /// 장소 관광지 타입
-    let contentTypeId: String
+    let contentTypeID: String
     /// 중심 좌표로부터의 거리
     let dist: String?
     /// 썸네일이미지
@@ -38,7 +40,9 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
     let tel: String?
     /// 장소명
     let title: String
-    
+
+    /// JSON 키 매핑을 위한 CodingKeys
+    /// API 응답의 키명과 Swift 프로퍼티명을 매핑
     enum CodingKeys: String, CodingKey {
         case addr1
         case addr2
@@ -47,7 +51,7 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
         case cat2
         case cat3
         case id = "contentid"
-        case contentTypeId = "contenttypeid"
+        case contentTypeID = "contenttypeid"
         case dist
         /// 카드 UI 에 사용할 큰 썸네일 이미지
         case bigThumbnailImage = "firstimage"
@@ -59,149 +63,3 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
         case title
     }
 }
-
-let mockPlace1 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A01",
-    cat2: nil,
-    cat3: nil,
-    id: "11",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문"
-)
-
-let mockPlace2 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A02",
-    cat2: nil,
-    cat3: nil,
-    id: "12",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문2"
-)
-
-let mockPlaceArray: [PlaceDTO] = [mockPlace1, mockPlace2, mockPlace3, mockPlace4, mockPlace5, mockPlace6, mockPlace7, mockPlace8]
-
-let mockPlace3 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A01",
-    cat2: nil,
-    cat3: nil,
-    id: "13",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문3"
-)
-
-let mockPlace4 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A02",
-    cat2: nil,
-    cat3: nil,
-    id: "14",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문4"
-)
-
-let mockPlace5 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A01",
-    cat2: nil,
-    cat3: nil,
-    id: "15",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문5"
-)
-
-let mockPlace6 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A02",
-    cat2: nil,
-    cat3: nil,
-    id: "16",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문6"
-)
-
-let mockPlace7 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A01",
-    cat2: nil,
-    cat3: nil,
-    id: "17",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문7"
-)
-
-let mockPlace8 = PlaceDTO(
-    addr1: nil,
-    addr2: nil,
-    areaCode: nil,
-    cat1: "A02",
-    cat2: nil,
-    cat3: nil,
-    id: "18",
-    contentTypeId: "11",
-    dist: nil,
-    bigThumbnailImage: nil,
-    thumbnailImage: nil,
-    mapX: nil,
-    mapY: nil,
-    tel: nil,
-    title: "광화문8"
-)

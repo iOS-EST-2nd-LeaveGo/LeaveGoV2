@@ -46,7 +46,7 @@ struct PlannerPlaceListView: View {
             }
         }
         .onAppear {
-            places = mockPlaceArray
+            
         }
     }
 }
