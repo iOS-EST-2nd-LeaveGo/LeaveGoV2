@@ -31,12 +31,12 @@ struct PlaceDetailDTO: Decodable {
     /// - Returns: 해당하는 ContentType, 알 수 없는 타입은 .touristAttraction으로 기본값 처리
     var contentType: ContentType {
         switch contentTypeID {
-        case "12": .touristAttraction
-        case "14": .cultureFacility
-        case "28": .leisureSports
-        case "38": .shopping
-        case "39": .restaurant
-        default: .touristAttraction
+        case "12": return .touristAttraction
+        case "14": return .cultureFacility
+        case "28": return .leisureSports
+        case "38": return .shopping
+        case "39": return .restaurant
+        default: return .touristAttraction
         }
     }
 
