@@ -28,17 +28,26 @@ final class NetworkManager: NetworkService {
         }
         
         var request = try endpoint.urlRequest()
-        
-        if var urlComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false) {
-            var queryItems = urlComponents.queryItems ?? []
 
-            // API 키를 디코딩해서 원본 형태로 만든 후 추가
-            let decodedApiKey = apiKey.removingPercentEncoding ?? apiKey
-            queryItems.append(URLQueryItem(name: "serviceKey", value: decodedApiKey))
-
-            urlComponents.queryItems = queryItems
-            request.url = urlComponents.url
+        guard let requestURL = request.url,
+              var urlComponents = URLComponents(url: requestURL, resolvingAgainstBaseURL: false) else {
+            print(NetworkError.invalidRequestURL.localizedDescription)
+            throw NetworkError.invalidRequestURL
         }
+
+        var queryItems = urlComponents.queryItems ?? []
+
+        // API 키를 디코딩해서 원본 형태로 만든 후 추가
+        let decodedApiKey = apiKey.removingPercentEncoding ?? apiKey
+        queryItems.append(URLQueryItem(name: "serviceKey", value: decodedApiKey))
+
+        urlComponents.queryItems = queryItems
+
+        guard let finalURL = urlComponents.url else {
+            print(NetworkError.invalidRequestURL.localizedDescription)
+            throw NetworkError.invalidRequestURL
+        }
+        request.url = finalURL
         
         let (data, response) = try await session.data(for: request)
         
