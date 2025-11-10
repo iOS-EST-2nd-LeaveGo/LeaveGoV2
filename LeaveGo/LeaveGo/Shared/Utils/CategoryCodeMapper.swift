@@ -5,7 +5,7 @@
 //  Created by Kitcat Seo on 9/14/25.
 //
 
-import SwiftUI
+import Foundation
 
 struct CategoryCodeMapper {
     private static let codeToNameMap: [String: String] = [

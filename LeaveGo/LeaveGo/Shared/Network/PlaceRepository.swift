@@ -5,7 +5,7 @@
 //  Created by Kitcat Seo on 11/4/25.
 //
 
-import SwiftUI
+import Foundation
 
 /// 장소 관련 데이터 접근을 담당하는 Repository 클래스
 final class PlaceRepository {

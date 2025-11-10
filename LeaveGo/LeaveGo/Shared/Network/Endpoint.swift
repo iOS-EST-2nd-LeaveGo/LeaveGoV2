@@ -5,7 +5,7 @@
 //  Created by Kitcat Seo on 10/29/25.
 //
 
-import SwiftUI
+import Foundation
 
 /// API 서비스 타입 정의
 enum APIType {

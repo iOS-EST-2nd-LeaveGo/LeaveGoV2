@@ -5,7 +5,7 @@
 //  Created by Kitcat Seo on 10/29/25.
 //
 
-import SwiftUI
+import Foundation
 
 /// 네트워크 통신을 위한 서비스 프로토콜
 protocol NetworkService {
