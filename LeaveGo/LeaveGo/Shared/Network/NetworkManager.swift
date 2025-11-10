@@ -61,7 +61,7 @@ final class NetworkManager: NetworkService {
         return data
     }
     
-    func decode<T: Decodable>(data: Data, type: T.Type) throws -> T? {
+    func decode<T: Decodable>(data: Data, type: T.Type) throws -> T {
         do {
             let decoder = JSONDecoder()
             return try decoder.decode(type, from: data)

@@ -19,7 +19,7 @@ protocol NetworkService {
     /// - Parameters:
     ///   - data: 디코딩할 JSON 데이터
     ///   - type: 디코딩 타겟 타입
-    /// - Returns: 디코딩된 객체, 실패 시 nil
+    /// - Returns: 디코딩된 객체
     /// - Throws: 디코딩 에러
-    func decode<T: Decodable>(data: Data, type: T.Type) throws -> T?
+    func decode<T: Decodable>(data: Data, type: T.Type) throws -> T
 }
