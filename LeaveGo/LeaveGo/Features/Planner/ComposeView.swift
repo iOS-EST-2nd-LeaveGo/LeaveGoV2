@@ -38,9 +38,6 @@ extension PlannerView {
                 }
             }
             .navigationTitle("새로운 여행 만들기")
-            .onAppear {
-                print("\(selectedPlaces.map { $0.title })")
-            }
         }
     }
     
@@ -141,21 +138,38 @@ extension PlannerView {
                             rowAction: nil) {
                                 selectedPlaceForDetails = place
                             }
-                            .sheet(item: $selectedPlaceForDetails) { place in
-                                Text(place.title)
-                                    .presentationDetents([.fraction(0.4), .large])
-                            }
                     }
                 }
+                .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
+                .sheet(item: $selectedPlaceForDetails) { place in
+                    PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                        .presentationDetents([.fraction(0.4), .large])
+                }
                 
-                Spacer()
+                Spacer() 
             }
         }
     }
 }
 
 #Preview {
-    let previewPlace = PlaceDTO(addr1: nil, addr2: nil, areaCode: nil, cat1: "A01", cat2: nil, cat3: nil, id: "11", contentTypeID: "11", dist: nil, bigThumbnailImage: nil, thumbnailImage: nil, mapX: nil, mapY: nil, tel: nil, title: "광화문")
+    let previewPlace = PlaceDTO(
+        addr1: Optional("대구광역시 동구 각산동"),
+        addr2: Optional("134"),
+        areaCode: Optional("4"),
+        cat1: Optional("A01"),
+        cat2: Optional("A0101"),
+        cat3: Optional("A01010500"),
+        id: "2667909",
+        contentTypeID: "12",
+        dist: nil,
+        bigThumbnailImage: Optional(""),
+        thumbnailImage: Optional(""),
+        mapX: Optional("128.7199264348"),
+        mapY: Optional("35.8799433837"),
+        tel: Optional(""),
+        title: "나불지 생태공원"
+    )
     
-    PlannerView.ComposeView(selectedPlaces: Array(repeating: previewPlace, count: 2))
+    PlannerView.ComposeView(selectedPlaces: [previewPlace])
 }

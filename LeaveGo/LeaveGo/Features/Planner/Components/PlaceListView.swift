@@ -32,16 +32,12 @@ extension PlannerView {
                             } accessoryAction: {
                                 selectedPlaceForDetails = place
                             }
-                            .sheet(item: $selectedPlaceForDetails) { place in
-                                Text(place.title)
-                                    .presentationDetents([.fraction(0.4), .large])
-                            }
                     }
                     .listStyle(.plain)
                     .buttonStyle(.plain)
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear
-                            .frame(height: DesignToken.Layout.bottomActionButtonHeight)
+                    .sheet(item: $selectedPlaceForDetails) { place in
+                        PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                            .presentationDetents([.fraction(0.4), .large])
                     }
                 } else {
                     ProgressView()
