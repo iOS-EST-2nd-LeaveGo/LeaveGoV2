@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct SectionButtonLabel: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .foregroundStyle(.lgAccent)
-            .font(.footnote)
+extension PlannerView {
+    struct SectionButtonLabel: View {
+        let title: String
+        
+        var body: some View {
+            Text(title)
+                .foregroundStyle(.lgAccent)
+                .font(.footnote)
+        }
     }
 }
