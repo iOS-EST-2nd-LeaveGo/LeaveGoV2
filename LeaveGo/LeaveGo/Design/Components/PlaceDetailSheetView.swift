@@ -44,20 +44,29 @@ struct PlaceDetailSheetView: View {
                     }
                     
                     Group {
-                        if let restDate = detailInfo?.restDate, !restDate.isEmpty {
-                            Text(restDate)
-                        } else if isLoading {
-                            placeholderTextView
-                        } else {
-                            Text("휴일 정보 없음")
+                        HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
+                            Text("휴무일")
+                            Text("|")
+                            if let restDate = detailInfo?.restDate, !restDate.isEmpty {
+                                Text(restDate)
+                            } else if isLoading {
+                                placeholderTextView
+                            } else {
+                                Text("정보 없음")
+                                
+                            }
                         }
                         
-                        if let openTime = detailInfo?.openTime, !openTime.isEmpty {
-                            Text(openTime)
-                        } else if isLoading {
-                            placeholderTextView
-                        } else {
-                            Text("운영시간 정보 없음")
+                        HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
+                            Text("운영시간")
+                            Text("|")
+                            if let openTime = detailInfo?.openTime, !openTime.isEmpty {
+                                Text(openTime)
+                            } else if isLoading {
+                                placeholderTextView
+                            } else {
+                                Text("정보 없음")
+                            }
                         }
                     }
                     .font(.footnote)
@@ -79,7 +88,7 @@ struct PlaceDetailSheetView: View {
             .frame(maxHeight: .infinity)
             
             BottomActionButton(title: buttonTitle, imageName: "arrow.trianglehead.turn.up.right.circle.fill", isEnabled: true) {
-                
+                // TODO: 경로 찾기 기능 완성되면 액션 추가하기
             }
         }
         .task {
