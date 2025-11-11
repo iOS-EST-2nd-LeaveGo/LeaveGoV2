@@ -84,18 +84,24 @@ struct PlaceDetailSheetView: View {
         }
         .task {
             // View가 열릴 때 Detail 정보 가져오기
-            do {
-                isLoading = true
-                detailInfo = try await PlaceRepository().fetchPlaceDetail(
-                    endpoint: PlaceDetailEndpoint(
-                        contentType: contentType,
-                        contentID: place.id
-                    )
+            await loadDetail()
+        }
+    }
+}
+
+extension PlaceDetailSheetView {
+    private func loadDetail() async {
+        do {
+            isLoading = true
+            detailInfo = try await PlaceRepository().fetchPlaceDetail(
+                endpoint: PlaceDetailEndpoint(
+                    contentType: contentType,
+                    contentID: place.id
                 )
-                isLoading = false
-            } catch {
-                
-            }
+            )
+            isLoading = false
+        } catch {
+            print("🔥 \(place.title) 상세 정보 가져오기 실패")
         }
     }
 }
