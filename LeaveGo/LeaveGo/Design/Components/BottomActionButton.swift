@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BottomActionButton: View {
     let title: String
+    var imageName: String? = nil
     let isEnabled: Bool
     let action: () -> Void
 
@@ -25,7 +26,7 @@ struct BottomActionButton: View {
             .frame(height: DesignToken.Spacing.xxLarge)
             .allowsHitTesting(false)
 
-            PrimaryButton(title: title, isEnabled: isEnabled, action: action)
+            PrimaryButton(title: title, imageName: imageName, isEnabled: isEnabled, action: action)
                 .padding(.horizontal, DesignToken.Spacing.large)
                 .padding(.bottom, DesignToken.Spacing.large)
                 .background(.lgBackground)

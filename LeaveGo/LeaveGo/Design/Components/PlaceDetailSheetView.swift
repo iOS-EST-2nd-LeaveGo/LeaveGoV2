@@ -78,7 +78,7 @@ struct PlaceDetailSheetView: View {
             .padding()
             .frame(maxHeight: .infinity)
             
-            BottomActionButton(title: buttonTitle, isEnabled: true) {
+            BottomActionButton(title: buttonTitle, imageName: "arrow.trianglehead.turn.up.right.circle.fill", isEnabled: true) {
                 
             }
         }
