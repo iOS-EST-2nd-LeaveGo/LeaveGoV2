@@ -9,6 +9,8 @@ import SwiftUI
 
 extension PlannerView {
     struct AreaSelectionView: View {
+        @State private var plannerViewModel = PlannerViewModel()
+        
         @State private var selectedArea: Area?
         @State private var shouldProceed = false
         
@@ -47,6 +49,7 @@ extension PlannerView {
                 isPresented: $shouldProceed) {
                     if let selectedArea {
                         PlaceSelectionView(area: selectedArea)
+                            .environment(plannerViewModel)
                     }
                 }
         }
@@ -75,5 +78,6 @@ extension PlannerView {
 #Preview {
     NavigationStack {
         PlannerView.AreaSelectionView()
+            .environment(PlannerViewModel())
     }
 }

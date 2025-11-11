@@ -9,6 +9,8 @@ import SwiftUI
 
 extension PlannerView {
     struct PlaceSelectionView: View {
+        @Environment(PlannerViewModel.self) private var plannerViewModel
+        
         let area: Area
         
         @State var selectedPlaces = [PlaceDTO]()
@@ -17,6 +19,7 @@ extension PlannerView {
         var body: some View {
             ZStack(alignment: .bottom) {
                 PlaceListView(area: area, selectedPlaces: $selectedPlaces)
+                    .environment(plannerViewModel)
                     .frame(maxHeight: .infinity)
                 
                 BottomActionButton(
@@ -37,4 +40,5 @@ extension PlannerView {
 
 #Preview {
     PlannerView.PlaceSelectionView(area: .busan)
+        .environment(PlannerViewModel())
 }
