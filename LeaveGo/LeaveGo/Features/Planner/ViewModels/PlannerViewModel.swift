@@ -23,7 +23,7 @@ final class PlannerViewModel {
             body.totalCount > 0 else { return }
             placeList = body.items.content
         } catch {
-            print("🔥 \(area.fullName) 지역에 장소가 없음")
+            print(#function, "🔥 \(area.fullName) 지역에 장소가 없음")
         }
     }
 }

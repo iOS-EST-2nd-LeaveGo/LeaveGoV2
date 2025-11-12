@@ -29,7 +29,7 @@ final class PlaceRepository {
         if data.response.body.totalCount != 0 {
             return data.response.body
         } else {
-            print("🔥 검색된 장소가 없음")
+            print(#function, "🔥 검색된 장소가 없음")
             return nil
         }
     }
@@ -46,7 +46,7 @@ final class PlaceRepository {
            let placeDetail = data.response.body.items.content.first {
             return await placeDetail.htmlCleaned()
         } else {
-            print("🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
+            print(#function, "🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
             return nil
         }
     }

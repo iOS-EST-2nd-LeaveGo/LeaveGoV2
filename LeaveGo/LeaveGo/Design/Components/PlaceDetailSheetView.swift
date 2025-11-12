@@ -128,7 +128,7 @@ extension PlaceDetailSheetView {
         
         do {
             guard let contentType = place.contentTypeID.toContentID() else {
-                print("🔥 사용하지 않는 contentTypeID: \(place.contentTypeID)")
+                print(#function, "🔥 사용하지 않는 contentTypeID: \(place.contentTypeID)")
                 return
             }
             isLoading = true
@@ -142,7 +142,7 @@ extension PlaceDetailSheetView {
             )
         } catch {
             // 에러 발생 시 콘솔에 로그 출력
-            print("🔥 \(place.title) 상세 정보 가져오기 실패")
+            print(#function, "🔥 \(place.title) 상세 정보 가져오기 실패")
         }
     }
 }
