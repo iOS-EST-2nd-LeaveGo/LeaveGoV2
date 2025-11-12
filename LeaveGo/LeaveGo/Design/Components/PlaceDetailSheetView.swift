@@ -25,12 +25,6 @@ struct PlaceDetailSheetView: View {
         }
     }
     
-    var placeholderTextView: some View {
-        Text("로딩 중..")
-            .font(.footnote)
-            .foregroundStyle(.lgLabelSecondary)
-    }
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             ScrollView {
@@ -43,34 +37,8 @@ struct PlaceDetailSheetView: View {
                         Spacer()
                     }
                     
-                    Group {
-                        HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
-                            Text("휴무일")
-                            Text("|")
-                            if let restDate = detailInfo?.restDate, !restDate.isEmpty {
-                                Text(restDate)
-                            } else if isLoading {
-                                placeholderTextView
-                            } else {
-                                Text("정보 없음")
-                                
-                            }
-                        }
-                        
-                        HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
-                            Text("운영시간")
-                            Text("|")
-                            if let openTime = detailInfo?.openTime, !openTime.isEmpty {
-                                Text(openTime)
-                            } else if isLoading {
-                                placeholderTextView
-                            } else {
-                                Text("정보 없음")
-                            }
-                        }
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(.lgLabelSecondary)
+                    DetailLabelRow(isLoading: $isLoading, label: "휴무일", value: detailInfo?.restDate)
+                    DetailLabelRow(isLoading: $isLoading, label: "운영시간", value: detailInfo?.openTime)
                     
                     if let addr1 = place.addr1, !addr1.isEmpty {
                         Text("\(addr1) \(place.addr2 ?? "")")
@@ -97,6 +65,49 @@ struct PlaceDetailSheetView: View {
         .task(id: place.id) {
             // View가 열릴 때 Detail 정보 가져오기
             await loadDetail()
+        }
+    }
+    
+    private struct DetailLabelRow: View {
+        @Binding var isLoading: Bool
+        
+        let label: String
+        let value: String?
+        
+        private enum DetailFetchStatus: String {
+            case noData = "정보 없음"
+            case loading = "로딩 중.."
+        }
+        
+        private func placeholderTextView(status: DetailFetchStatus) -> some View {
+            Text(status.rawValue)
+                .font(.footnote)
+                .foregroundStyle(.lgLabelSecondary)
+        }
+        
+        var body: some View {
+            HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
+                Text(label)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 6)
+                    .background(.lgBackgroundAccentLight)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .foregroundStyle(.lgAccent)
+                
+                Group {
+                    if let value = value, !value.isEmpty {
+                        Text(value)
+                            .foregroundStyle(.lgLabel)
+                    } else if isLoading {
+                        placeholderTextView(status: .loading)
+                    } else {
+                        placeholderTextView(status: .noData)
+                    }
+                }
+                .padding(.vertical, 4)
+                .foregroundStyle(.lgLabelSecondary)
+            }
+            .font(.footnote)
         }
     }
 }
