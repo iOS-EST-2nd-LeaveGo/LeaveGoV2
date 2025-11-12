@@ -36,7 +36,8 @@ extension PlannerView {
                             .padding(.bottom, index == places.count - 1 ? DesignToken.Layout.bottomActionButtonHeight : .zero)
                             .onAppear {
                                 if index == places.count - 20 {
-                                    if plannerViewModel.page <= (plannerViewModel.totalCount / plannerViewModel.numOfRows) + 1 {
+                                    let maxPage = (plannerViewModel.totalCount + plannerViewModel.numOfRows - 1) / plannerViewModel.numOfRows
+                                    if plannerViewModel.page < maxPage {
                                         plannerViewModel.page += 1
                                     }
                                 }
@@ -56,9 +57,17 @@ extension PlannerView {
                 await plannerViewModel.fetchPlaceList()
             }
             .onDisappear {
-                plannerViewModel.page = 1
+                resetData()
             }
         }
+    }
+}
+
+extension PlannerView.PlaceListView {
+    private func resetData() {
+        plannerViewModel.page = 1
+        plannerViewModel.totalCount = 0
+        plannerViewModel.placeList = []
     }
 }
 
