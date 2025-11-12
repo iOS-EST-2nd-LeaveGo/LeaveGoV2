@@ -11,13 +11,12 @@ extension PlannerView {
     struct PlaceListView: View {
         @Environment(PlannerViewModel.self) private var plannerViewModel
         
-        let area: Area
         @Binding var selectedPlaces: [PlaceDTO]
-        
-        @State var places = [PlaceDTO]()
         @State var selectedPlaceForDetails: PlaceDTO?
         
         var body: some View {
+            @State var places: [PlaceDTO] = plannerViewModel.placeList
+            
             VStack {
                 if !places.isEmpty {
                     List(places.indices, id: \.self) { index in
@@ -35,6 +34,12 @@ extension PlannerView {
                                 selectedPlaceForDetails = place
                             }
                             .padding(.bottom, index == places.count - 1 ? DesignToken.Layout.bottomActionButtonHeight : .zero)
+                            .onAppear {
+                                if index == places.count - 20 {
+                                    plannerViewModel.page += 1
+                                    print("\(index) 까지 탐색, \(plannerViewModel.page) 페이지 로드 시작")
+                                }
+                            }
                     }
                     .listStyle(.plain)
                     .buttonStyle(.plain)
@@ -47,8 +52,7 @@ extension PlannerView {
                 }
             }
             .task {
-                await plannerViewModel.fetchPlaceList(of: area)
-                places = plannerViewModel.placeList
+                await plannerViewModel.fetchPlaceList()
             }
         }
     }

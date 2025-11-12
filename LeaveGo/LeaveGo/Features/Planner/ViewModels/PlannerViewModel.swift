@@ -12,16 +12,29 @@ import SwiftUI
 final class PlannerViewModel {
     let repository = PlaceRepository()
     
+    var selectedArea: Area? = nil
     var placeList: [PlaceDTO] = []
     
-    var pageNo = 1
+    var page: Int = 1 {
+        didSet {
+            Task {
+                await fetchPlaceList()
+            }
+        }
+    }
     let numOfRows = 40
     
-    func fetchPlaceList(of area: Area) async {
+    @MainActor
+    func fetchPlaceList() async {
+        guard let area = selectedArea else { return }
         do {
-            guard let body = try await repository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: pageNo, numOfRows: numOfRows, area: area)),
+            guard let body = try await repository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: page, numOfRows: numOfRows, area: area)),
             body.totalCount > 0 else { return }
-            placeList = body.items.content
+            if placeList.isEmpty {
+                placeList = body.items.content
+            } else {
+                placeList.append(contentsOf: body.items.content)
+            }
         } catch {
             print(#function, "🔥 \(area.fullName) 지역에 장소가 없음")
         }

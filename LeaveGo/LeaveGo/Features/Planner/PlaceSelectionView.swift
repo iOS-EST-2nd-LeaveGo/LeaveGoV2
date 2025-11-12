@@ -18,7 +18,7 @@ extension PlannerView {
         
         var body: some View {
             ZStack(alignment: .bottom) {
-                PlaceListView(area: area, selectedPlaces: $selectedPlaces)
+                PlaceListView(selectedPlaces: $selectedPlaces)
                     .environment(plannerViewModel)
                     .frame(maxHeight: .infinity)
                 
@@ -29,6 +29,9 @@ extension PlannerView {
                         print("\(selectedPlaces.map { $0.title })")
                     }
             }
+            .onAppear(perform: {
+                plannerViewModel.selectedArea = area
+            })
             .navigationTitle("여행지 선택하기")
             .navigationDestination(
                 isPresented: $shouldProceed) {
