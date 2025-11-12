@@ -36,8 +36,9 @@ extension PlannerView {
                             .padding(.bottom, index == places.count - 1 ? DesignToken.Layout.bottomActionButtonHeight : .zero)
                             .onAppear {
                                 if index == places.count - 20 {
-                                    plannerViewModel.page += 1
-                                    print("\(index) 까지 탐색, \(plannerViewModel.page) 페이지 로드 시작")
+                                    if plannerViewModel.page <= (plannerViewModel.totalCount / plannerViewModel.numOfRows) + 1 {
+                                        plannerViewModel.page += 1
+                                    }
                                 }
                             }
                     }
@@ -53,6 +54,9 @@ extension PlannerView {
             }
             .task {
                 await plannerViewModel.fetchPlaceList()
+            }
+            .onDisappear {
+                plannerViewModel.page = 1
             }
         }
     }

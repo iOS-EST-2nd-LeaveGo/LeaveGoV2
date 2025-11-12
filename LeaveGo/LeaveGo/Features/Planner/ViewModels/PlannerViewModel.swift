@@ -17,11 +17,14 @@ final class PlannerViewModel {
     
     var page: Int = 1 {
         didSet {
-            Task {
-                await fetchPlaceList()
-            }
+            guard page != 1, oldValue != page else { return }
+                Task {
+                    await fetchPlaceList()
+                }
         }
     }
+    
+    var totalCount: Int = 0
     let numOfRows = 40
     
     @MainActor
@@ -30,6 +33,8 @@ final class PlannerViewModel {
         do {
             guard let body = try await repository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: page, numOfRows: numOfRows, area: area)),
             body.totalCount > 0 else { return }
+            
+            totalCount = body.totalCount
             if placeList.isEmpty {
                 placeList = body.items.content
             } else {
