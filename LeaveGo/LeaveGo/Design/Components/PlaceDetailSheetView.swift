@@ -73,12 +73,15 @@ struct PlaceDetailSheetView: View {
                     .foregroundStyle(.lgLabelSecondary)
                     
                     if let addr1 = place.addr1, !addr1.isEmpty {
-                        Text(place.addr1!)
-                        + Text(" \(place.addr2 ?? "")")
+                        Text("\(addr1) \(place.addr2 ?? "")")
                     }
                     
                     if let tel = place.tel, !tel.isEmpty {
-                        Text(tel)
+                        if let url = URL(string: "tel://\(tel)") {
+                            Link(tel, destination: url)
+                        } else {
+                            Text(tel)
+                        }
                     }
                     
                     Spacer()
@@ -91,7 +94,7 @@ struct PlaceDetailSheetView: View {
                 // TODO: 경로 찾기 기능 완성되면 액션 추가하기
             }
         }
-        .task {
+        .task(id: place.id) {
             // View가 열릴 때 Detail 정보 가져오기
             await loadDetail()
         }
@@ -99,7 +102,10 @@ struct PlaceDetailSheetView: View {
 }
 
 extension PlaceDetailSheetView {
+    @MainActor
     private func loadDetail() async {
+        defer { isLoading = false }
+        
         do {
             isLoading = true
             detailInfo = try await PlaceRepository().fetchPlaceDetail(
@@ -108,7 +114,6 @@ extension PlaceDetailSheetView {
                     contentID: place.id
                 )
             )
-            isLoading = false
         } catch {
             print("🔥 \(place.title) 상세 정보 가져오기 실패")
         }
