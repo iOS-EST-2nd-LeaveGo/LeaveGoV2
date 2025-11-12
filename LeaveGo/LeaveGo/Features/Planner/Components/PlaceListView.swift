@@ -20,7 +20,9 @@ extension PlannerView {
         var body: some View {
             VStack {
                 if !places.isEmpty {
-                    List(places) { place in
+                    List(places.indices, id: \.self) { index in
+                        let place = places[index]
+                        
                         PlaceListRow(
                             place: place,
                             listMode: .selectable) {
@@ -32,6 +34,7 @@ extension PlannerView {
                             } accessoryAction: {
                                 selectedPlaceForDetails = place
                             }
+                            .padding(.bottom, index == places.count - 1 ? DesignToken.Layout.bottomActionButtonHeight : .zero)
                     }
                     .listStyle(.plain)
                     .buttonStyle(.plain)
