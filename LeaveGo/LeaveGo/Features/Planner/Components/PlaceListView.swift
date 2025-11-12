@@ -53,25 +53,11 @@ extension PlannerView {
                     ProgressView()
                 }
             }
-            .task {
-                await plannerViewModel.fetchPlaceList()
-            }
-            .onDisappear {
-                resetData()
-            }
         }
     }
 }
 
-extension PlannerView.PlaceListView {
-    private func resetData() {
-        plannerViewModel.page = 1
-        plannerViewModel.totalCount = 0
-        plannerViewModel.placeList = []
-    }
-}
-
 #Preview {
-    PlannerView.PlaceSelectionView(area: .busan)
+    PlannerView.PlaceSelectionView()
         .environment(PlannerViewModel())
 }

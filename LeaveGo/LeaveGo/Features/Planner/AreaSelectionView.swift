@@ -41,16 +41,19 @@ extension PlannerView {
                     title: "다음",
                     isEnabled: selectedArea != nil) {
                         shouldProceed = true
+                        
+                        // 기존에 선택된 지역과 같은 경우에는 selectedArea를 변경하지 않기
+                        if plannerViewModel.selectedArea != selectedArea {
+                            plannerViewModel.selectedArea = selectedArea
+                        }
                     }
             }
             .navigationTitle("여행 지역 선택하기")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(
                 isPresented: $shouldProceed) {
-                    if let selectedArea {
-                        PlaceSelectionView(area: selectedArea)
-                            .environment(plannerViewModel)
-                    }
+                    PlaceSelectionView()
+                        .environment(plannerViewModel)
                 }
         }
     }

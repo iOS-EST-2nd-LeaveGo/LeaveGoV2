@@ -12,8 +12,20 @@ import SwiftUI
 final class PlannerViewModel {
     let repository = PlaceRepository()
     
-    var selectedArea: Area? = nil
     var placeList: [PlaceDTO] = []
+    
+    var selectedArea: Area? {
+        didSet {
+            if oldValue != nil {
+                page = 1
+                totalCount = 0
+                placeList = []
+            }
+            Task {
+                await fetchPlaceList()
+            }
+        }
+    }
     
     var page: Int = 1 {
         didSet {
@@ -26,6 +38,10 @@ final class PlannerViewModel {
     
     var totalCount: Int = 0
     let numOfRows = 40
+    
+    deinit {
+        print(self, #function)
+    }
     
     @MainActor
     func fetchPlaceList() async {

@@ -11,8 +11,6 @@ extension PlannerView {
     struct PlaceSelectionView: View {
         @Environment(PlannerViewModel.self) private var plannerViewModel
         
-        let area: Area
-        
         @State var selectedPlaces = [PlaceDTO]()
         @State var shouldProceed: Bool = false
         
@@ -26,12 +24,8 @@ extension PlannerView {
                     title: "추가하기",
                     isEnabled: !selectedPlaces.isEmpty) {
                         shouldProceed = true
-                        print("\(selectedPlaces.map { $0.title })")
                     }
             }
-            .onAppear(perform: {
-                plannerViewModel.selectedArea = area
-            })
             .navigationTitle("여행지 선택하기")
             .navigationDestination(
                 isPresented: $shouldProceed) {
@@ -42,6 +36,6 @@ extension PlannerView {
 }
 
 #Preview {
-    PlannerView.PlaceSelectionView(area: .busan)
+    PlannerView.PlaceSelectionView()
         .environment(PlannerViewModel())
 }
