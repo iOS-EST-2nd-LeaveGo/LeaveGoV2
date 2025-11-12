@@ -18,7 +18,7 @@ extension PlannerView {
         @State var selectedPlaceForDetails: PlaceDTO?
         
         var body: some View {
-            @State var places: [PlaceDTO] = plannerViewModel.placeList
+            let places: [PlaceDTO] = plannerViewModel.placeList
             
             VStack {
                 if !places.isEmpty {

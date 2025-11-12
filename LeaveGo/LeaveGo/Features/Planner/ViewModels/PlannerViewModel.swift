@@ -14,8 +14,6 @@ final class PlannerViewModel {
     /// 여행지 API 요청을 처리하는 리포지토리
     let repository = PlaceRepository()
 
-    var placeList: [PlaceDTO] = []
-
     /// 선택된 지역 (변경 시 자동으로 첫 페이지의 데이터 불러오기)
     var selectedArea: Area? {
         didSet {
@@ -48,6 +46,9 @@ final class PlannerViewModel {
     var totalCount: Int = 0
     /// 한 페이지당 요청할 여행지 수
     let numOfRows = 40
+    /// 데이터 fetch 상태 플래그
+    var isLoading = false
+    var placeList: [PlaceDTO] = []
 
     deinit {
         print(self, #function)
@@ -56,14 +57,18 @@ final class PlannerViewModel {
     /// 선택된 지역의 여행지 목록을 API로부터 가져오는 함수
     @MainActor
     func fetchPlaceList() async {
-        guard let area = selectedArea else { return }
+        defer { isLoading = false }
+        
+        guard !isLoading, let area = selectedArea else { return }
+        
+        isLoading = true
         do {
             // API 요청 및 응답 유효성 검증
             guard let body = try await repository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: page, numOfRows: numOfRows, area: area)),
-            body.totalCount > 0 else { return }
-
+                  body.totalCount > 0 else { return }
+            
             totalCount = body.totalCount
-
+            
             // 페이지가 1이 아닐 경우 기존 목록에 추가
             if placeList.isEmpty {
                 placeList = body.items.content
