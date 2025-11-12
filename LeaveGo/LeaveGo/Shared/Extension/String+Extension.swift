@@ -27,4 +27,16 @@ extension String {
             return self
         }.value
     }
+    
+    /// 콘텐츠 타입 ID 문자열을 ContentType enum으로 변환하는 함수
+    /// 매칭되는 ContentType 또는 nil을 반환
+    func toContentID() -> ContentType? {
+        return [
+            "12": .touristAttraction,
+            "14": .cultureFacility,
+            "28": .leisureSports,
+            "38": .shopping,
+            "39": .restaurant
+        ][self] ?? nil
+    }
 }
