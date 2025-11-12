@@ -18,18 +18,6 @@ struct PlaceDetailSheetView: View {
     @State private var detailInfo: PlaceDetailDTO? = nil
     /// 데이터 로딩 상태
     @State private var isLoading: Bool = false
-
-    /// contentTypeID를 기반으로 콘텐츠 타입 결정
-    private var contentType: ContentType {
-        switch place.contentTypeID {
-        case "12": return .touristAttraction  // 관광지
-        case "14": return .cultureFacility    // 문화시설
-        case "28": return .leisureSports      // 레포츠
-        case "38": return .shopping           // 쇼핑
-        case "39": return .restaurant         // 음식점
-        default: return .touristAttraction    // 기본값
-        }
-    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -139,8 +127,13 @@ extension PlaceDetailSheetView {
         defer { isLoading = false }
         
         do {
+            guard let contentType = place.contentTypeID.toContentID() else {
+                print("🔥 사용하지 않는 contentTypeID: \(place.contentTypeID)")
+                return
+            }
             isLoading = true
-            // PlaceRepository를 통해 상세 정보 요청
+            
+            // PlaceRepository를 통해 장소의 상세 정보 요청
             detailInfo = try await PlaceRepository().fetchPlaceDetail(
                 endpoint: PlaceDetailEndpoint(
                     contentType: contentType,
