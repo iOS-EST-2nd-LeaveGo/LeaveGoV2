@@ -73,6 +73,7 @@ struct LeadingAccessory: View {
         case .plain:
             EmptyView()
         case .selectable:
+            // TODO: 선택 됐을 때는 체크마크 대신 번호 추가하는 것으로 수정하기
             Image(systemName: isSelected ? "checkmark.circle.fill" : "checkmark.circle")
                 .resizable()
                 .scaledToFit()

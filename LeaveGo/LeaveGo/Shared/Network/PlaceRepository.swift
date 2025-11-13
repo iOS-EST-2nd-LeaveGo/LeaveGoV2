@@ -22,17 +22,14 @@ final class PlaceRepository {
     /// - Parameter endpoint: API 엔드포인트 정보
     /// - Returns: 장소 목록과 총 개수를 포함한 튜플, 데이터가 없으면 nil
     /// - Throws: 네트워크 에러
-    func fetchPlaceList(endpoint: Endpoint) async throws -> (placeList: [PlaceDTO], totalCount: Int)? {
+    func fetchPlaceList(endpoint: Endpoint) async throws -> TourResponseBody<PlaceDTO>? {
         let rawData = try await networkManager.fetch(from: endpoint)
 
         let data = try networkManager.decode(data: rawData, type: TourResponseRoot<PlaceDTO>.self)
         if data.response.body.totalCount != 0 {
-            return (
-                placeList: data.response.body.items.content,
-                totalCount: data.response.body.totalCount
-            )
+            return data.response.body
         } else {
-            print("🔥 검색된 장소가 없음")
+            print(#function, "🔥 검색된 장소가 없음")
             return nil
         }
     }
@@ -49,7 +46,7 @@ final class PlaceRepository {
            let placeDetail = data.response.body.items.content.first {
             return await placeDetail.htmlCleaned()
         } else {
-            print("🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
+            print(#function, "🔥 contentTypeID \(endpoint.contentType.rawValue), contentID \(endpoint.contentID)에 해당하는 장소를 찾을 수 없음")
             return nil
         }
     }

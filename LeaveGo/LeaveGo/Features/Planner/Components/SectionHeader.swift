@@ -7,13 +7,15 @@
 
 import SwiftUI
 
-struct SectionHeader: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .padding(.leading, DesignToken.Spacing.small)
-            .font(.footnote)
-            .foregroundStyle(.lgLabelSecondary)
+extension PlannerView {
+    struct SectionHeader: View {
+        let title: String
+        
+        var body: some View {
+            Text(title)
+                .padding(.leading, DesignToken.Spacing.small)
+                .font(.footnote)
+                .foregroundStyle(.lgLabelSecondary)
+        }
     }
 }

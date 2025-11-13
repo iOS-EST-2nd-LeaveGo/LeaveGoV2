@@ -35,3 +35,16 @@ extension Planner {
     }
 }
 */
+
+extension Planner {
+    func toDTO() -> PlannerDTO {
+        return PlannerDTO(
+            id: self.id ?? UUID(),
+            title: self.title ?? "",
+            startDate: self.startDate ?? Date(),
+            endDate: self.endDate ?? Date(),
+            thumbnail: self.thumbnail,
+            placeList: nil
+        )
+    }
+}
