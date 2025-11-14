@@ -17,7 +17,7 @@ struct PlannerView: View {
         NavigationStack(path: $path) {
             VStack {
                 if !planners.isEmpty {
-                    PlannerListView(plannerList: planners.map { $0.toDTO() }, path: $path)
+                    PlannerListView(plannerList: planners.map { $0.toPlannerDTO() }, path: $path)
                 } else {
                     PlannerPlaceholderView(path: $path)
                 }

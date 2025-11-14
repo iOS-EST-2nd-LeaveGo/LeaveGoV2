@@ -16,3 +16,24 @@ struct PlannerPlaceDTO {
     let order: Int16
 }
 
+extension PlannerPlaceDTO {
+    func toPlaceDTO() -> PlaceDTO {
+        return PlaceDTO(
+            addr1: nil,
+            addr2: nil,
+            areaCode: nil,
+            cat1: nil,
+            cat2: nil,
+            cat3: nil,
+            id: self.contentID,
+            contentTypeID: "",
+            dist: nil,
+            bigThumbnailImage: nil,
+            thumbnailImage: self.thumbnail,
+            mapX: nil,
+            mapY: nil,
+            tel: nil,
+            title: self.title
+        )
+    }
+}

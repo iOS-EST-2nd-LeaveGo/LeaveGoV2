@@ -46,6 +46,23 @@ extension PlannerView {
 }
 
 #Preview {
-    PlannerView.PlannerCardView(planner: mockPlanners.first!)
+    let previewPlanner: PlannerDTO = PlannerDTO(
+        id: UUID(),
+        title: "광화문 여행",
+        startDate: Date(),
+        endDate: Date(),
+        thumbnail: nil,
+        placeList: [
+            PlannerPlaceDTO(
+                id: UUID(),
+                title: "광화문",
+                contentID: "1",
+                thumbnail: nil,
+                date: Date(),
+                order: 1)
+        ]
+    )
+    
+    PlannerView.PlannerCardView(planner: previewPlanner)
         .padding()
 }
