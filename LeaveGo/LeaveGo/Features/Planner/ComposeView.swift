@@ -14,7 +14,6 @@ extension PlannerView {
         
         let selectedPlaces: [PlaceDTO]
         
-        @State var plannerTitle = ""
         @State var shouldProceed: Bool = false
         @State var selectedPlace: PlaceDTO?
         
@@ -22,7 +21,7 @@ extension PlannerView {
             ZStack(alignment: .bottom) {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
-                        PlannerNameSection(value: $plannerTitle)
+                        PlannerNameSection()
                         
                         ThumbnailSection()
                         
@@ -34,9 +33,11 @@ extension PlannerView {
                 
                 BottomActionButton(
                     title: "여행 만들기",
-                    isEnabled: !plannerTitle.isEmpty
+                    isEnabled: plannerViewModel.plannerTitle != nil
                 ) {
-                    print("\(plannerTitle) 여행 생성: \(selectedPlaces.map { $0.title })")
+                    Task {
+                        await plannerViewModel.savePlanner(placeList: selectedPlaces)
+                    }
                 }
             }
             .navigationTitle("새로운 여행 만들기")
@@ -44,20 +45,21 @@ extension PlannerView {
     }
     
     struct PlannerNameSection: View {
-        @Binding var value: String
+        @Environment(PlannerViewModel.self) var plannerViewModel
         
         var body: some View {
             CommonTextField(
                 label: "제목 *",
-                value: $value,
+                value: plannerViewModel.titleBinding,
                 prompt: "여행의 제목을 입력하세요"
             )
         }
     }
     
     struct ThumbnailSection: View {
+        @Environment(PlannerViewModel.self) var plannerViewModel
+        
         @State var photoPickerItem: PhotosPickerItem?
-        @State var selectedImage: UIImage?
         
         let imageWidth: CGFloat = 80
         
@@ -77,7 +79,7 @@ extension PlannerView {
                     }
                 }
                 
-                if let selectedImage {
+                if let selectedImage = plannerViewModel.selectedImage {
                     SelectedImageView(selectedImage: selectedImage, imageWidth: imageWidth)
                 } else {
                     PlaceholderImageView(width: imageWidth)
@@ -90,7 +92,7 @@ extension PlannerView {
                    let image = UIImage(data: data) {
                     guard let thumbnail = await image
                         .byPreparingThumbnail(ofSize: CGSize(width: 300, height: 300)) else { return }
-                    selectedImage = thumbnail
+                    plannerViewModel.selectedImage = thumbnail
                 }
             }
         }

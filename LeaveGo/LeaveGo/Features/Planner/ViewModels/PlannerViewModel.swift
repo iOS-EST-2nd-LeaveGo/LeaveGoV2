@@ -49,6 +49,26 @@ final class PlannerViewModel {
     let numOfRows = 40
     /// 데이터 fetch 상태 플래그
     var isLoading = false
+    
+    var plannerTitle: String? = nil
+    var titleBinding: Binding<String> {
+        Binding(
+            get: { self.plannerTitle ?? "" },
+            set: { newValue in
+                self.plannerTitle = newValue.isEmpty ? nil : newValue
+            }
+        )
+    }
+    
+    var selectedImage: UIImage? = nil
+    var imageBinding: Binding<UIImage> {
+        Binding(
+            get: { self.selectedImage ?? UIImage() },
+            set: { newValue in
+                self.selectedImage = newValue
+            }
+        )
+    }
     var placeList: [PlaceDTO] = []
     
     let planner: PlannerDTO? = nil
@@ -83,7 +103,7 @@ final class PlannerViewModel {
         }
     }
     
-    func savePlanner(planner: PlannerDTO? = nil, title: String, thumbnailImage: UIImage, placeList: [PlaceDTO]) async {
+    func savePlanner(planner: PlannerDTO? = nil, placeList: [PlaceDTO]) async {
         var newPlanner: PlannerDTO
         
         var plannerPlaceList = [PlannerPlaceDTO]()
@@ -99,7 +119,7 @@ final class PlannerViewModel {
             // 기존 여행을 편집할 때
             newPlanner = PlannerDTO(
                 id: planner.id,
-                title: title,
+                title: plannerTitle ?? planner.title,
                 startDate: planner.startDate,
                 endDate: planner.endDate,
                 thumbnail: nil, // TODO: ImageManager 적용하기
@@ -107,11 +127,12 @@ final class PlannerViewModel {
             )
         } else {
             // 새로운 여행일 때
+            guard let plannerTitle else { return }
             let now = Date.now
             
             newPlanner = PlannerDTO(
                 id: UUID(),
-                title: title,
+                title: plannerTitle,
                 startDate: now,
                 endDate: now,
                 thumbnail: nil, // TODO: ImageManager 적용하기
