@@ -12,7 +12,8 @@ import SwiftUI
 @Observable
 final class PlannerViewModel {
     /// 여행지 API 요청을 처리하는 리포지토리
-    let repository = PlaceRepository()
+    let placeRepository = PlaceRepository()
+    let plannerRepository = PlannerRepository()
 
     /// 선택된 지역 (변경 시 자동으로 첫 페이지의 데이터 불러오기)
     var selectedArea: Area? {
@@ -49,6 +50,8 @@ final class PlannerViewModel {
     /// 데이터 fetch 상태 플래그
     var isLoading = false
     var placeList: [PlaceDTO] = []
+    
+    let planner: PlannerDTO? = nil
 
     deinit {
         print(self, #function)
@@ -64,7 +67,7 @@ final class PlannerViewModel {
         isLoading = true
         do {
             // API 요청 및 응답 유효성 검증
-            guard let body = try await repository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: page, numOfRows: numOfRows, area: area)),
+            guard let body = try await placeRepository.fetchPlaceList(endpoint: AreaBasedEndpoint(page: page, numOfRows: numOfRows, area: area)),
                   body.totalCount > 0 else { return }
             
             totalCount = body.totalCount
@@ -77,6 +80,49 @@ final class PlannerViewModel {
             }
         } catch {
             print(#function, "🔥 \(area.fullName) 지역에 장소가 없음")
+        }
+    }
+    
+    func savePlanner(planner: PlannerDTO? = nil, title: String, thumbnailImage: UIImage, placeList: [PlaceDTO]) async {
+        var newPlanner: PlannerDTO
+        
+        var plannerPlaceList = [PlannerPlaceDTO]()
+        
+        for index in 0 ... (placeList.count - 1) {
+            let place = placeList[index]
+            plannerPlaceList.append(
+                place.toPlannerPlaceDTO(with: index)
+            )
+        }
+        
+        if let planner {
+            // 기존 여행을 편집할 때
+            newPlanner = PlannerDTO(
+                id: planner.id,
+                title: title,
+                startDate: planner.startDate,
+                endDate: planner.endDate,
+                thumbnail: nil, // TODO: ImageManager 적용하기
+                placeList: plannerPlaceList
+            )
+        } else {
+            // 새로운 여행일 때
+            let now = Date.now
+            
+            newPlanner = PlannerDTO(
+                id: UUID(),
+                title: title,
+                startDate: now,
+                endDate: now,
+                thumbnail: nil, // TODO: ImageManager 적용하기
+                placeList: plannerPlaceList
+            )
+        }
+        
+        do {
+            try await plannerRepository.upsertPlanner(newPlanner, places: newPlanner.placeList)
+        } catch {
+            print(error)
         }
     }
 }

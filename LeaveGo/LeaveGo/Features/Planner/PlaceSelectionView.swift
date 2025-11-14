@@ -34,6 +34,7 @@ extension PlannerView {
             .navigationDestination(
                 isPresented: $shouldProceed) {
                     ComposeView(selectedPlaces: selectedPlaces)
+                        .environment(plannerViewModel)
                 }
         }
     }

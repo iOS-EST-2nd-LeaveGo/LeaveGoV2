@@ -16,6 +16,7 @@ final class PlannerRepository: PlannerRepositoryType {
     }
 
     // MARK: Planner와 Place 생성 or 업데이트
+    @discardableResult
     func upsertPlanner(_ dto: PlannerDTO, places: [PlannerPlaceDTO]) async throws -> NSManagedObjectID {
         let bgContext = pc.newBackgroundContext(author: "planner.upsert")
 

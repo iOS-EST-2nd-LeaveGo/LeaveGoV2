@@ -10,11 +10,13 @@ import PhotosUI
 
 extension PlannerView {
     struct ComposeView: View {
+        @Environment(PlannerViewModel.self) var plannerViewModel
+        
         let selectedPlaces: [PlaceDTO]
         
         @State var plannerTitle = ""
         @State var shouldProceed: Bool = false
-        @State var selectedPlaceForDetails: PlaceDTO?
+        @State var selectedPlace: PlaceDTO?
         
         var body: some View {
             ZStack(alignment: .bottom) {
@@ -54,7 +56,7 @@ extension PlannerView {
     }
     
     struct ThumbnailSection: View {
-        @State var photoItem: PhotosPickerItem?
+        @State var photoPickerItem: PhotosPickerItem?
         @State var selectedImage: UIImage?
         
         let imageWidth: CGFloat = 80
@@ -67,7 +69,7 @@ extension PlannerView {
                     Spacer()
                     
                     PhotosPicker(
-                        selection: $photoItem,
+                        selection: $photoPickerItem,
                         matching: .images,
                         photoLibrary: .shared()
                     ) {
@@ -81,12 +83,14 @@ extension PlannerView {
                     PlaceholderImageView(width: imageWidth)
                 }
             }
-            .task(id: photoItem) {
-                guard let photoItem = photoItem else { return }
+            .task(id: photoPickerItem) {
+                guard let photoPickerItem else { return }
                 
-                if let data = try? await photoItem.loadTransferable(type: Data.self),
+                if let data = try? await photoPickerItem.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
-                    selectedImage = image
+                    guard let thumbnail = await image
+                        .byPreparingThumbnail(ofSize: CGSize(width: 300, height: 300)) else { return }
+                    selectedImage = thumbnail
                 }
             }
         }
@@ -114,7 +118,7 @@ extension PlannerView {
         
         let selectedPlaces: [PlaceDTO]
         
-        @State var selectedPlaceForDetails: PlaceDTO?
+        @State var selectedPlace: PlaceDTO?
         
         var body: some View {
             VStack(spacing: DesignToken.Spacing.medium) {
@@ -136,12 +140,12 @@ extension PlannerView {
                             place: place,
                             listMode: .draggable,
                             rowAction: nil) {
-                                selectedPlaceForDetails = place
+                                selectedPlace = place
                             }
                     }
                 }
                 .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
-                .sheet(item: $selectedPlaceForDetails) { place in
+                .sheet(item: $selectedPlace) { place in
                     PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
                         .presentationDetents([.fraction(0.4), .large])
                 }
@@ -172,4 +176,5 @@ extension PlannerView {
     )
     
     PlannerView.ComposeView(selectedPlaces: [previewPlace])
+        .environment(PlannerViewModel())
 }
