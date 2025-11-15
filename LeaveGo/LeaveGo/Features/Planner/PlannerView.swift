@@ -26,10 +26,15 @@ struct PlannerView: View {
             }
             .navigationTitle("나의 여행")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: String.self) { value in
-                if value == "newPlanner" {
+            .navigationDestination(for: String.self) { path in
+                if path == "newPlanner" {
                     AreaSelectionView()
+                        .environment(PlannerViewModel())
                 }
+            }
+            .navigationDestination(for: PlannerDTO.self) { planner in
+                ComposeView(planner: planner)
+                    .environment(PlannerViewModel())
             }
         }
     }
@@ -46,11 +51,12 @@ extension PlannerView {
         ]
         
         var body: some View {
-            
             ScrollView {
                 LazyVGrid(columns: columns, spacing: DesignToken.Spacing.large) {
                     ForEach(plannerList) { planner in
-                        PlannerCardView(planner: planner)
+                        NavigationLink(value: planner) {
+                            PlannerCardView(planner: planner)
+                        }
                     }
                     
                     Button {

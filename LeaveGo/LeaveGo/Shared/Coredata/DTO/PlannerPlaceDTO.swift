@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PlannerPlaceDTO {
+struct PlannerPlaceDTO: Hashable {
     let id: UUID
     let title: String
     let contentID: String

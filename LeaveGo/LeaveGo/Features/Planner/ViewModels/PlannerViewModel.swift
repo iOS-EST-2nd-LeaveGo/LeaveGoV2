@@ -53,7 +53,13 @@ final class PlannerViewModel {
     var plannerTitle: String? = nil
     var titleBinding: Binding<String> {
         Binding(
-            get: { self.plannerTitle ?? "" },
+            get: {
+                if let planner = self.planner {
+                    return planner.title
+                } else {
+                    return self.plannerTitle ?? ""
+                }
+            },
             set: { newValue in
                 self.plannerTitle = newValue.isEmpty ? nil : newValue
             }
@@ -71,7 +77,7 @@ final class PlannerViewModel {
     }
     var placeList: [PlaceDTO] = []
     
-    let planner: PlannerDTO? = nil
+    var planner: PlannerDTO? = nil
 
     deinit {
         print(self, #function)

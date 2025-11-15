@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PlannerDTO: Identifiable {
+struct PlannerDTO: Identifiable, Hashable {
     let id: UUID
     let title: String
     let startDate: Date

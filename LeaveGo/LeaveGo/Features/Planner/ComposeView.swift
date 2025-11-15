@@ -12,7 +12,12 @@ extension PlannerView {
     struct ComposeView: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
         
-        let selectedPlaces: [PlaceDTO]
+        var planner: PlannerDTO? = nil
+        var selectedPlaces: [PlaceDTO]?
+        
+        private var isNewPlanner: Bool {
+            return planner == nil
+        }
         
         @State var shouldProceed: Bool = false
         @State var selectedPlace: PlaceDTO?
@@ -25,22 +30,33 @@ extension PlannerView {
                         
                         ThumbnailSection()
                         
-                        PlaceListSection(selectedPlaces: selectedPlaces)
+                        if isNewPlanner, let selectedPlaces {
+                            PlaceListSection(selectedPlaces: selectedPlaces)
+                        } else if !isNewPlanner, let planner {
+                            PlaceListSection(selectedPlaces: planner.placeList.map { $0.toPlaceDTO() })
+                        }
                     }
                     .padding(.horizontal, DesignToken.Spacing.large)
                 }
                 .frame(maxHeight: .infinity)
                 
                 BottomActionButton(
-                    title: "여행 만들기",
+                    title: isNewPlanner ? "여행 만들기" : "저장하기",
                     isEnabled: plannerViewModel.plannerTitle != nil
                 ) {
                     Task {
-                        await plannerViewModel.savePlanner(placeList: selectedPlaces)
+                        if isNewPlanner, let selectedPlaces {
+                            await plannerViewModel.savePlanner(placeList: selectedPlaces)
+                        }
                     }
                 }
             }
-            .navigationTitle("새로운 여행 만들기")
+            .navigationTitle(isNewPlanner ? "새로운 여행 만들기" : "여행 변경하기")
+            .onAppear {
+                if !isNewPlanner {
+                    plannerViewModel.planner = planner
+                }
+            }
         }
     }
     
