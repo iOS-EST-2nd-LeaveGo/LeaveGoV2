@@ -57,6 +57,7 @@ extension PlannerView {
                 id: UUID(),
                 title: "광화문",
                 contentID: "1",
+                contentTypeID: "12",
                 thumbnail: nil,
                 date: Date(),
                 order: 1)

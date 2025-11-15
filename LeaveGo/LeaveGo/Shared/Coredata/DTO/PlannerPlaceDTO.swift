@@ -11,6 +11,7 @@ struct PlannerPlaceDTO {
     let id: UUID
     let title: String
     let contentID: String
+    let contentTypeID: String
     let thumbnail: String?
     let date: Date
     let order: Int16
@@ -26,7 +27,7 @@ extension PlannerPlaceDTO {
             cat2: nil,
             cat3: nil,
             id: self.contentID,
-            contentTypeID: "",
+            contentTypeID: self.contentTypeID,
             dist: nil,
             bigThumbnailImage: nil,
             thumbnailImage: self.thumbnail,

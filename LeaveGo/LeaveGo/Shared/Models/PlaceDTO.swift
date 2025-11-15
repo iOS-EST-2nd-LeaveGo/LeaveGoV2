@@ -70,6 +70,7 @@ extension PlaceDTO {
             id: UUID(),
             title: self.title,
             contentID: self.id,
+            contentTypeID: self.contentTypeID,
             thumbnail: self.thumbnailImage,
             date: Date(),
             order: Int16(order)

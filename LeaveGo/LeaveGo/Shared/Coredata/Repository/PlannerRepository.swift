@@ -57,6 +57,7 @@ final class PlannerRepository: PlannerRepositoryType {
                     // Update
                     existing.title = dto.title
                     existing.contentID = dto.contentID
+                    existing.contentTypeID = dto.contentTypeID
                     existing.thumbnail = dto.thumbnail ?? ""
                     existing.date = dto.date
                     existing.order = dto.order
@@ -67,6 +68,7 @@ final class PlannerRepository: PlannerRepositoryType {
                     new.id = dto.id
                     new.title = dto.title
                     new.contentID = dto.contentID
+                    new.contentTypeID = dto.contentTypeID
                     new.thumbnail = dto.thumbnail ?? ""
                     new.date = dto.date
                     new.order = dto.order

@@ -13,6 +13,7 @@ extension PlannerPlace {
             id: self.id ?? UUID(),
             title: self.title ?? "",
             contentID: self.contentID ?? "",
+            contentTypeID: self.contentTypeID ?? "",
             thumbnail: self.thumbnail,
             date: self.date ?? Date.now,
             order: self.order
