@@ -24,6 +24,8 @@ extension PlannerView {
         @State var selectedPlaces: [PlaceDTO]?
         
         @State var selectedPlace: PlaceDTO?
+        
+        /// CTA 버튼의 활성화 여부를 담는 상태 변수
         @State var shouldProceed: Bool = false
         
         var body: some View {
@@ -43,11 +45,11 @@ extension PlannerView {
                 .frame(maxHeight: .infinity)
                 
                 BottomActionButton(
-                    title: isNewPlanner ? "여행 만들기" : "저장하기",
-                    isEnabled: plannerViewModel.plannerTitle != nil
+                    title: isNewPlanner ? "여행 만들기" : "여행 저장하기",
+                    isEnabled: shouldProceed
                 ) {
                     Task {
-                        if isNewPlanner, let selectedPlaces {
+                        if let selectedPlaces {
                             await plannerViewModel.savePlanner(placeList: selectedPlaces)
                         }
                     }
@@ -58,6 +60,9 @@ extension PlannerView {
                     configureForEditing()
                 }
             }
+            .onChange(of: plannerViewModel.plannerTitle, { _, newValue in
+                shouldProceed = (newValue != nil)
+            })
             .navigationTitle(isNewPlanner ? "새로운 여행 만들기" : "여행 변경하기")
         }
     }
