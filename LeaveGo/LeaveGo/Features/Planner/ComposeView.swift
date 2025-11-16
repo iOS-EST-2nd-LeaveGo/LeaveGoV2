@@ -60,7 +60,7 @@ extension PlannerView {
         }
     }
     
-    struct PlannerNameSection: View {
+    private struct PlannerNameSection: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
         
         var body: some View {
@@ -72,7 +72,7 @@ extension PlannerView {
         }
     }
     
-    struct ThumbnailSection: View {
+    private struct ThumbnailSection: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
         
         @State var photoPickerItem: PhotosPickerItem?
@@ -131,7 +131,7 @@ extension PlannerView {
         }
     }
     
-    struct PlaceListSection: View {
+    private struct PlaceListSection: View {
         @Environment(\.dismiss) var dismiss
         
         let selectedPlaces: [PlaceDTO]

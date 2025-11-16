@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension PlannerView {
+extension PlannerView.ComposeView {
     struct SectionHeader: View {
         let title: String
         
