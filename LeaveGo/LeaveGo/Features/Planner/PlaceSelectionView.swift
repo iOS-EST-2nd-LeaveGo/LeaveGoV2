@@ -28,6 +28,7 @@ extension PlannerView {
                     title: "추가하기",
                     isEnabled: !selectedPlaces.isEmpty) {
                         shouldProceed = true
+                        plannerViewModel.placeList = selectedPlaces
                     }
             }
             .navigationTitle("여행지 선택하기")

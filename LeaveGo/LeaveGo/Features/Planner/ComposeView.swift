@@ -13,14 +13,18 @@ extension PlannerView {
         @Environment(PlannerViewModel.self) var plannerViewModel
         
         var planner: PlannerDTO? = nil
-        var selectedPlaces: [PlaceDTO]?
         
         private var isNewPlanner: Bool {
             return planner == nil
         }
         
-        @State var shouldProceed: Bool = false
+        /// 장소 목록을 담는 상태 변수
+        /// 신규 생성 시: PlaceSelection에서 주입
+        /// 변경 시: .onAppear 시 전달받은 planner로부터 추출
+        @State var selectedPlaces: [PlaceDTO]?
+        
         @State var selectedPlace: PlaceDTO?
+        @State var shouldProceed: Bool = false
         
         var body: some View {
             ZStack(alignment: .bottom) {
@@ -30,10 +34,8 @@ extension PlannerView {
                         
                         ThumbnailSection()
                         
-                        if isNewPlanner, let selectedPlaces {
+                        if let selectedPlaces {
                             PlaceListSection(selectedPlaces: selectedPlaces)
-                        } else if !isNewPlanner, let planner {
-                            PlaceListSection(selectedPlaces: planner.placeList.map { $0.toPlaceDTO() })
                         }
                     }
                     .padding(.horizontal, DesignToken.Spacing.large)
@@ -51,13 +53,22 @@ extension PlannerView {
                     }
                 }
             }
-            .navigationTitle(isNewPlanner ? "새로운 여행 만들기" : "여행 변경하기")
             .onAppear {
                 if !isNewPlanner {
-                    plannerViewModel.planner = planner
+                    configureForEditing()
                 }
             }
+            .navigationTitle(isNewPlanner ? "새로운 여행 만들기" : "여행 변경하기")
         }
+    }
+}
+
+extension PlannerView.ComposeView {
+    private func configureForEditing() {
+        guard let planner else { return }
+        plannerViewModel.planner = planner
+        selectedPlaces = planner.placeList.map { $0.toPlaceDTO() }
+        shouldProceed = true
     }
     
     private struct PlannerNameSection: View {
@@ -168,7 +179,7 @@ extension PlannerView {
                         .presentationDetents([.fraction(0.4), .large])
                 }
                 
-                Spacer() 
+                Spacer()
             }
         }
     }

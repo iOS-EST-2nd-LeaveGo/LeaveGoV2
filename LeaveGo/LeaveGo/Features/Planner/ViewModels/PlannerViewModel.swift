@@ -109,7 +109,7 @@ final class PlannerViewModel {
         }
     }
     
-    func savePlanner(planner: PlannerDTO? = nil, placeList: [PlaceDTO]) async {
+    func savePlanner(placeList: [PlaceDTO]) async {
         var newPlanner: PlannerDTO
         
         var plannerPlaceList = [PlannerPlaceDTO]()
