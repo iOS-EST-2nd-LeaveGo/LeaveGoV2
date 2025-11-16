@@ -75,6 +75,17 @@ final class PlannerViewModel {
             }
         )
     }
+    
+    var shouldOpenSheet: Bool = false
+    var sheetStatusBinding: Binding<Bool> {
+        Binding(
+            get: { self.shouldOpenSheet },
+            set: { newValue in
+                self.shouldOpenSheet = newValue
+            }
+        )
+    }
+    
     var placeList: [PlaceDTO] = []
     
     var planner: PlannerDTO? = nil

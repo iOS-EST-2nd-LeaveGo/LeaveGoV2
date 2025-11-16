@@ -11,6 +11,10 @@ extension PlannerView {
     /// 선택된 지역 내에서 여행지를 선택하는 뷰
     struct PlaceSelectionView: View {
         @Environment(PlannerViewModel.self) private var plannerViewModel
+        
+        private var isNewPlanner: Bool {
+            return plannerViewModel.planner == nil
+        }
 
         /// 사용자가 선택한 장소 목록을 PlaceListView, ComposeView 간에 공유하기 위해 사용하는 상태 변수
         @State var selectedPlaces = [PlaceDTO]()
@@ -27,15 +31,23 @@ extension PlannerView {
                 BottomActionButton(
                     title: "추가하기",
                     isEnabled: !selectedPlaces.isEmpty) {
-                        shouldProceed = true
                         plannerViewModel.placeList = selectedPlaces
+                        if isNewPlanner {
+                            // 여행 생성일 시 navigation 스택에 추가하기
+                            shouldProceed = true
+                        } else {
+                            // 여행 수정일 시 sheet 닫기
+                            plannerViewModel.shouldOpenSheet = false
+                        }
                     }
             }
             .navigationTitle("여행지 선택하기")
             .navigationDestination(
                 isPresented: $shouldProceed) {
-                    ComposeView(selectedPlaces: selectedPlaces)
-                        .environment(plannerViewModel)
+                    if isNewPlanner {
+                        ComposeView(selectedPlaces: selectedPlaces)
+                            .environment(plannerViewModel)
+                    }
                 }
         }
     }

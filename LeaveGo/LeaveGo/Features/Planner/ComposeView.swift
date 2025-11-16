@@ -37,7 +37,8 @@ extension PlannerView {
                         ThumbnailSection()
                         
                         if let selectedPlaces {
-                            PlaceListSection(selectedPlaces: selectedPlaces)
+                            PlaceListSection(selectedPlaces: selectedPlaces, isNewPlanner: isNewPlanner)
+                                .environment(plannerViewModel)
                         }
                     }
                     .padding(.horizontal, DesignToken.Spacing.large)
@@ -62,6 +63,14 @@ extension PlannerView {
             }
             .onChange(of: plannerViewModel.plannerTitle, { _, newValue in
                 shouldProceed = (newValue != nil)
+            })
+            .onChange(of: plannerViewModel.shouldOpenSheet, { _, newValue in
+                if newValue == false {
+                    Task {
+                        try await Task.sleep(for: .seconds(0.5))
+                        selectedPlaces = plannerViewModel.placeList
+                    }
+                }
             })
             .navigationTitle(isNewPlanner ? "새로운 여행 만들기" : "여행 변경하기")
         }
@@ -148,11 +157,14 @@ extension PlannerView.ComposeView {
     }
     
     private struct PlaceListSection: View {
+        @Environment(PlannerViewModel.self) var plannerViewModel
         @Environment(\.dismiss) var dismiss
         
         let selectedPlaces: [PlaceDTO]
+        let isNewPlanner: Bool
         
         @State var selectedPlace: PlaceDTO?
+        @State var shouldOpenAlert: Bool = false
         
         var body: some View {
             VStack(spacing: DesignToken.Spacing.medium) {
@@ -162,7 +174,11 @@ extension PlannerView.ComposeView {
                     Spacer()
                     
                     Button {
-                        dismiss()
+                        if isNewPlanner {
+                            dismiss()
+                        } else {
+                            shouldOpenAlert = true
+                        }
                     } label: {
                         SectionButtonLabel(title: "여행지 다시 선택하기")
                     }
@@ -186,11 +202,34 @@ extension PlannerView.ComposeView {
                 
                 Spacer()
             }
+            .alert(
+                "여행지 다시 선택하기",
+                isPresented: $shouldOpenAlert,
+                actions: {
+                    Button("확인") {
+                        plannerViewModel.shouldOpenSheet = true
+                    }
+                    
+                    Button("취소", role: .cancel) { }
+                },
+                message: {
+                    Text("기존에 추가했던 모든 여행지를 삭제하고 다시 선택하시겠어요?")
+                }
+            )
+            .sheet(isPresented: plannerViewModel.sheetStatusBinding) {
+                plannerViewModel.shouldOpenSheet = false
+            } content: {
+                NavigationStack {
+                    PlannerView.AreaSelectionView()
+                        .environment(plannerViewModel)
+                        .presentationDetents([.fraction(0.8), .large])
+                }
+            }
         }
     }
 }
 
-#Preview {
+#Preview("여행 생성 시") {
     let previewPlace = PlaceDTO(
         addr1: Optional("대구광역시 동구 각산동"),
         addr2: Optional("134"),
@@ -210,5 +249,29 @@ extension PlannerView.ComposeView {
     )
     
     PlannerView.ComposeView(selectedPlaces: [previewPlace])
+        .environment(PlannerViewModel())
+}
+
+#Preview("여행 수정 시") {
+    let previewPlanner = PlannerDTO(
+        id: UUID(),
+        title: "서울",
+        startDate: Date(),
+        endDate: Date(),
+        thumbnail: "",
+        placeList: [
+            PlannerPlaceDTO(
+                id: UUID(),
+                title: "광화문",
+                contentID: "12",
+                contentTypeID: "111",
+                thumbnail: nil,
+                date: Date(),
+                order: 1
+            )
+        ]
+    )
+    
+    PlannerView.ComposeView(planner: previewPlanner)
         .environment(PlannerViewModel())
 }
