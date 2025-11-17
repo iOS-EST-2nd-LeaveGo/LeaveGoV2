@@ -89,6 +89,7 @@ final class PlannerViewModel {
     var placeList: [PlaceDTO] = []
     
     var planner: PlannerDTO? = nil
+    var modifiedPlaceList: [PlaceDTO] = []
 
     deinit {
         print(self, #function)

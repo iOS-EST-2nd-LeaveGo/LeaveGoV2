@@ -69,8 +69,8 @@ extension PlannerView {
                 if newValue == false {
                     Task {
                         try await Task.sleep(for: .seconds(0.5))
-                        if !plannerViewModel.placeList.isEmpty {
-                            selectedPlaces = plannerViewModel.placeList
+                        if !plannerViewModel.modifiedPlaceList.isEmpty {
+                            selectedPlaces = plannerViewModel.modifiedPlaceList
                         }
                     }
                 }

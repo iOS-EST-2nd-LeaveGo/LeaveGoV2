@@ -31,12 +31,13 @@ extension PlannerView {
                 BottomActionButton(
                     title: "추가하기",
                     isEnabled: !selectedPlaces.isEmpty) {
-                        plannerViewModel.placeList = selectedPlaces
                         if isNewPlanner {
                             // 여행 생성일 시 navigation 스택에 추가하기
+                            plannerViewModel.placeList = selectedPlaces
                             shouldProceed = true
                         } else {
                             // 여행 수정일 시 sheet 닫기
+                            plannerViewModel.modifiedPlaceList = selectedPlaces
                             plannerViewModel.shouldOpenSheet = false
                         }
                     }
