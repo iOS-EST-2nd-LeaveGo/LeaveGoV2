@@ -48,6 +48,7 @@ struct PlaceListRow: View {
                         Text(place.title)
                             .font(.headline)
                             .foregroundStyle(.lgLabel)
+                            .lineLimit(1)
                     }
                     
                     Spacer()

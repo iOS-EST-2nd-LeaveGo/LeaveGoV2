@@ -31,17 +31,18 @@ extension PlannerView {
         var body: some View {
             ZStack(alignment: .bottom) {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
+                    VStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
                         PlannerNameSection()
+                            .padding(.horizontal, DesignToken.Spacing.large)
                         
                         ThumbnailSection()
+                            .padding(.horizontal, DesignToken.Spacing.large)
                         
-                        if let selectedPlaces {
-                            PlaceListSection(selectedPlaces: selectedPlaces, isNewPlanner: isNewPlanner)
+                        if selectedPlaces != nil {
+                            PlaceListSection(selectedPlaces: $selectedPlaces, isNewPlanner: isNewPlanner)
                                 .environment(plannerViewModel)
                         }
                     }
-                    .padding(.horizontal, DesignToken.Spacing.large)
                 }
                 .frame(maxHeight: .infinity)
                 
@@ -68,7 +69,9 @@ extension PlannerView {
                 if newValue == false {
                     Task {
                         try await Task.sleep(for: .seconds(0.5))
-                        selectedPlaces = plannerViewModel.placeList
+                        if !plannerViewModel.placeList.isEmpty {
+                            selectedPlaces = plannerViewModel.placeList
+                        }
                     }
                 }
             })
@@ -160,11 +163,27 @@ extension PlannerView.ComposeView {
         @Environment(PlannerViewModel.self) var plannerViewModel
         @Environment(\.dismiss) var dismiss
         
-        let selectedPlaces: [PlaceDTO]
+        @Binding var selectedPlaces: [PlaceDTO]?
         let isNewPlanner: Bool
         
         @State var selectedPlace: PlaceDTO?
         @State var shouldOpenAlert: Bool = false
+        @State var rowHeight: CGFloat = 0
+        
+        private func move(from source: IndexSet, to destination: Int) {
+            guard var places = selectedPlaces else { return }
+            places.move(fromOffsets: source, toOffset: destination)
+            selectedPlaces = places
+        }
+        
+        private func calculateListHeight() -> CGFloat {
+            let placeCount = CGFloat(selectedPlaces?.count ?? 0)
+            let contentHeight = placeCount * rowHeight
+            let bottomPadding = DesignToken.Layout.bottomActionButtonHeight + DesignToken.Spacing.xxxLarge
+            let spacing = placeCount > 1 ? (placeCount - 1) * 28 : 0
+            
+            return contentHeight + bottomPadding + spacing
+        }
         
         var body: some View {
             VStack(spacing: DesignToken.Spacing.medium) {
@@ -183,24 +202,38 @@ extension PlannerView.ComposeView {
                         SectionButtonLabel(title: "여행지 다시 선택하기")
                     }
                 }
+                .padding(.horizontal, DesignToken.Spacing.large)
                 
-                LazyVStack(spacing: DesignToken.Spacing.large) {
-                    ForEach(selectedPlaces) { place in
+                List {
+                    ForEach(selectedPlaces ?? []) { place in
                         PlaceListRow(
                             place: place,
                             listMode: .draggable,
                             rowAction: nil) {
                                 selectedPlace = place
                             }
+                            .background(
+                                GeometryReader { geo in
+                                    Color.clear.onAppear {
+                                        if rowHeight == 0 {
+                                            rowHeight = geo.size.height
+                                        }
+                                    }
+                                }
+                            )
                     }
+                    .onMove(perform: move)
                 }
-                .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
-                .sheet(item: $selectedPlace) { place in
-                    PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
-                        .presentationDetents([.fraction(0.4), .large])
-                }
-                
-                Spacer()
+            }
+            .listStyle(.plain)
+            .scrollDisabled(true)
+            .frame(
+                height: calculateListHeight(),
+                alignment: .top
+            )
+            .sheet(item: $selectedPlace) { place in
+                PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                    .presentationDetents([.fraction(0.4), .large])
             }
             .alert(
                 "여행지 다시 선택하기",
@@ -262,8 +295,17 @@ extension PlannerView.ComposeView {
         placeList: [
             PlannerPlaceDTO(
                 id: UUID(),
-                title: "광화문",
-                contentID: "12",
+                title: "광화문1",
+                contentID: "1",
+                contentTypeID: "111",
+                thumbnail: nil,
+                date: Date(),
+                order: 1
+            ),
+            PlannerPlaceDTO(
+                id: UUID(),
+                title: "광화문2",
+                contentID: "2",
                 contentTypeID: "111",
                 thumbnail: nil,
                 date: Date(),
