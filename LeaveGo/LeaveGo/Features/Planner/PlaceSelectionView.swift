@@ -16,7 +16,7 @@ extension PlannerView {
             return plannerViewModel.planner == nil
         }
 
-        /// 사용자가 선택한 장소 목록을 PlaceListView, ComposeView 간에 공유하기 위해 사용하는 상태 변수
+        /// 사용자가 선택한 장소 목록을 담는 상태 변수
         @State var selectedPlaces = [PlaceDTO]()
         /// navigationDestination용 바인딩 속성
         @State var shouldProceed: Bool = false
@@ -32,11 +32,10 @@ extension PlannerView {
                     title: "추가하기",
                     isEnabled: !selectedPlaces.isEmpty) {
                         if isNewPlanner {
-                            // 여행 생성일 시 navigation 스택에 추가하기
-                            plannerViewModel.placeList = selectedPlaces
+                            // 여행 생성 시: 추가하기 버튼을 누르면 다음 화면(ComposeView) Push
                             shouldProceed = true
                         } else {
-                            // 여행 수정일 시 sheet 닫기
+                            // 여행 수정 시: 추가하기 버튼을 누르면 여행지 선택 플로우를 종료하므로 ViewModel에 여행지 업데이트
                             plannerViewModel.modifiedPlaceList = selectedPlaces
                             plannerViewModel.shouldOpenSheet = false
                         }

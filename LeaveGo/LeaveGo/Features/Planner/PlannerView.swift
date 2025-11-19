@@ -7,10 +7,16 @@
 
 import SwiftUI
 
+/// 사용자의 여행 목록을 표시하는 메인 뷰
+/// - 저장된 여행이 있으면 그리드 형태로 표시
+/// - 저장된 여행이 없으면 플레이스홀더 뷰 표시
+/// - 새 여행 생성 및 기존 여행 수정 네비게이션 처리
 struct PlannerView: View {
+    /// 네비게이션 스택 경로 관리
     @State private var path = NavigationPath()
     
-    @FetchRequest(sortDescriptors: [SortDescriptor(\Planner.title, order: .reverse)])
+    /// CoreData에서 여행 목록을 가져오는 FetchRequest (생성일 역순 정렬)
+    @FetchRequest(sortDescriptors: [SortDescriptor(\Planner.createAt, order: .reverse)])
     private var planners: FetchedResults<Planner>
     
     var body: some View {
@@ -27,12 +33,15 @@ struct PlannerView: View {
             .navigationTitle("나의 여행")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: String.self) { path in
+                // 새 여행 생성 플로우: AreaSelection → PlaceSelection → ComposeView
                 if path == "newPlanner" {
                     AreaSelectionView()
                         .environment(PlannerViewModel())
                 }
             }
             .navigationDestination(for: PlannerDTO.self) { planner in
+                // 기존 여행 수정 플로우: ComposeView
+                // 여행지 변경 시 ComposeView 내에서 Sheet 생성: AreaSelection → PlaceSelection
                 ComposeView(planner: planner)
                     .environment(PlannerViewModel())
             }
@@ -41,6 +50,10 @@ struct PlannerView: View {
 }
 
 extension PlannerView {
+    /// 여행 목록을 2열 그리드로 표시하는 뷰
+    /// - 각 여행은 PlannerCardView로 표시
+    /// - 카드 클릭 시 수정 모드로 이동
+    /// - 마지막에 "새 여행 추가" 카드 표시
     struct PlannerListView: View {
         var plannerList: [PlannerDTO]
         @Binding var path: NavigationPath
@@ -70,6 +83,7 @@ extension PlannerView {
         }
     }
     
+    /// 저장된 여행이 없을 때 표시하는 플레이스홀더 뷰
     struct PlannerPlaceholderView: View {
         @Binding var path: NavigationPath
         

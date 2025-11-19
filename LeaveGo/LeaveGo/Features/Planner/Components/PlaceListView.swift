@@ -28,7 +28,7 @@ extension PlannerView {
                         PlaceListRow(
                             place: place,
                             listMode: .selectable) {
-                                // 장소 선택/선택해제 토글 로직
+                                // 장소 선택/선택 해제 토글
                                 if let selectedIndex = selectedPlaces.firstIndex(of: place) {
                                     selectedPlaces.remove(at: selectedIndex)
                                 } else {

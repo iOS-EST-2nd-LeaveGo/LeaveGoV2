@@ -9,35 +9,44 @@ import SwiftUI
 import PhotosUI
 
 extension PlannerView {
+    /// 여행 생성 및 기존 여행 수정을 위한 뷰
     struct ComposeView: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
         
+        /// 여행을 담는 변수
+        /// nil이면 여행 신규 생성, 데이터가 있으면 기존 여행 수정
         var planner: PlannerDTO? = nil
         
+        /// 생성/수정 모드를 구분하는 computed property
         private var isNewPlanner: Bool {
             return planner == nil
         }
         
-        /// 장소 목록을 담는 상태 변수
-        /// 신규 생성 시: PlaceSelection에서 주입
-        /// 변경 시: .onAppear 시 전달받은 planner로부터 추출
+        /// 현재 표시할 장소 목록을 담는 상태 변수
+        /// - 신규 생성 시: PlaceSelection에서 주입받은 데이터
+        /// - 수정 시: 기존 planner 데이터 + 새로 선택한 데이터 (시트 닫힘 시 업데이트)
         @State var selectedPlaces: [PlaceDTO]?
         
+        /// 사용자가 선택한 여행지의 상세 정보 시트를 열기 위한 상태 변수
         @State var selectedPlace: PlaceDTO?
         
-        /// CTA 버튼의 활성화 여부를 담는 상태 변수
+        /// 저장 버튼의 활성화 여부를 결정하는 상태 변수 (여행 제목이 입력되면 true)
         @State var shouldProceed: Bool = false
         
         var body: some View {
             ZStack(alignment: .bottom) {
+                // 메인 스크롤 컨텐츠
                 ScrollView {
                     VStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
+                        // 여행 제목 입력 섹션
                         PlannerNameSection()
                             .padding(.horizontal, DesignToken.Spacing.large)
                         
+                        // 썸네일 이미지 선택 섹션
                         ThumbnailSection()
                             .padding(.horizontal, DesignToken.Spacing.large)
                         
+                        // 선택된 여행지 목록 표시
                         if selectedPlaces != nil {
                             PlaceListSection(selectedPlaces: $selectedPlaces, isNewPlanner: isNewPlanner)
                                 .environment(plannerViewModel)
@@ -46,6 +55,7 @@ extension PlannerView {
                 }
                 .frame(maxHeight: .infinity)
                 
+                // 하단 고정 액션 버튼
                 BottomActionButton(
                     title: isNewPlanner ? "여행 만들기" : "여행 저장하기",
                     isEnabled: shouldProceed
@@ -58,17 +68,17 @@ extension PlannerView {
                 }
             }
             .onAppear {
-                if !isNewPlanner {
-                    configureForEditing()
-                }
+                // 수정 모드일 때 초기 데이터 설정
+                if !isNewPlanner { configureForEditing() }
             }
             .onChange(of: plannerViewModel.plannerTitle, { _, newValue in
+                // 여행 제목이 입력되면 저장 버튼 활성화
                 shouldProceed = (newValue != nil)
             })
             .onChange(of: plannerViewModel.shouldOpenSheet, { _, newValue in
+                // 여행지 재선택 시트를 닫을 때 여행지 목록을 새 목록으로 동기화
                 if newValue == false {
                     Task {
-                        try await Task.sleep(for: .seconds(0.5))
                         if !plannerViewModel.modifiedPlaceList.isEmpty {
                             selectedPlaces = plannerViewModel.modifiedPlaceList
                         }
@@ -81,10 +91,12 @@ extension PlannerView {
 }
 
 extension PlannerView.ComposeView {
+    /// 파라메터로 전달된 여행 데이터로 수정 모드를 준비
     private func configureForEditing() {
         guard let planner else { return }
         plannerViewModel.planner = planner
         selectedPlaces = planner.placeList.map { $0.toPlaceDTO() }
+        // 저장 버튼을 수동 활성화
         shouldProceed = true
     }
     
@@ -159,6 +171,7 @@ extension PlannerView.ComposeView {
         }
     }
     
+    /// 선택된 여행지 목록을 표시하고 관리하는 섹션
     private struct PlaceListSection: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
         @Environment(\.dismiss) var dismiss
@@ -166,27 +179,32 @@ extension PlannerView.ComposeView {
         @Binding var selectedPlaces: [PlaceDTO]?
         let isNewPlanner: Bool
         
+        /// 상세 정보 시트에 표기할 여행지
         @State var selectedPlace: PlaceDTO?
+        /// 여행지 재선택 확인 알럿 표시 여부
         @State var shouldOpenAlert: Bool = false
-        @State var rowHeight: CGFloat = 0
         
+        /// 각 행의 높이
+        /// ScrollView 안에 있는 List의 특성 상 전체 높이를 계산해 지정해줘야 함
+        @State var rowHeight: CGFloat = 0
+        /// List의 전체 높이를 계산하는 함수
+        private func calculateListHeight() -> CGFloat {
+            let placeCount = CGFloat(selectedPlaces?.count ?? 0)
+            let contentHeight = placeCount * rowHeight
+            let spacing = placeCount > 1 ? placeCount * 36 : 0
+            
+            return contentHeight + spacing
+        }
+        
+        /// 여행지 순서를 변경하는 함수
         private func move(from source: IndexSet, to destination: Int) {
             guard var places = selectedPlaces else { return }
             places.move(fromOffsets: source, toOffset: destination)
             selectedPlaces = places
         }
         
-        private func calculateListHeight() -> CGFloat {
-            let placeCount = CGFloat(selectedPlaces?.count ?? 0)
-            let contentHeight = placeCount * rowHeight
-            let bottomPadding = DesignToken.Layout.bottomActionButtonHeight + DesignToken.Spacing.xxxLarge
-            let spacing = placeCount > 1 ? (placeCount - 1) * 28 : 0
-            
-            return contentHeight + bottomPadding + spacing
-        }
-        
         var body: some View {
-            VStack(spacing: DesignToken.Spacing.medium) {
+            VStack(spacing: .zero) {
                 HStack {
                     SectionHeader(title: "여행지 *")
                     
@@ -223,10 +241,13 @@ extension PlannerView.ComposeView {
                             )
                     }
                     .onMove(perform: move)
+                    
+                    Color.clear
+                        .frame(height: DesignToken.Layout.bottomActionButtonHeight + DesignToken.Spacing.xxxLarge)
                 }
             }
             .listStyle(.plain)
-            .scrollDisabled(true)
+            .scrollDisabled(true) // List의 자체 스크롤은 비활성화, 상위 ScrollView에서 전체 페이지 스크롤
             .frame(
                 height: calculateListHeight(),
                 alignment: .top
