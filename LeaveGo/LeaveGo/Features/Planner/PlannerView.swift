@@ -35,8 +35,14 @@ struct PlannerView: View {
             .navigationDestination(for: String.self) { path in
                 // 새 여행 생성 플로우: AreaSelection → PlaceSelection → ComposeView
                 if path == "newPlanner" {
+                    let plannerViewModel = PlannerViewModel()
+                    
                     AreaSelectionView()
-                        .environment(PlannerViewModel())
+                        .environment(plannerViewModel)
+                        .onAppear {
+                            // 신규 여행 등록 시에 루트뷰로 한 번에 pop하기 위해 네비게이션 스택을 뷰모델에 저장하기
+                            plannerViewModel.navigationPath = $path
+                        }
                 }
             }
             .navigationDestination(for: PlannerDTO.self) { planner in

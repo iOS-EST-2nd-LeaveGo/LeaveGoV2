@@ -12,6 +12,7 @@ extension PlannerView {
     /// 여행 생성 및 기존 여행 수정을 위한 뷰
     struct ComposeView: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
+        @Environment(\.dismiss) var dismiss
         
         /// 여행을 담는 변수
         /// nil이면 여행 신규 생성, 데이터가 있으면 기존 여행 수정
@@ -63,6 +64,16 @@ extension PlannerView {
                     Task {
                         if let selectedPlaces {
                             await plannerViewModel.savePlanner(placeList: selectedPlaces)
+                            // 생성/수정 모드에 따라 네비게이션 효과 다르게 적용
+                            // 생성 시: 새로운 NavigationPath를 인스턴싱해 Root로 한번에 Pop
+                            // 수정 시: 이전 View로 한 단계 Pop
+                            if isNewPlanner {
+                                await MainActor.run {
+                                    plannerViewModel.navigationPath?.wrappedValue = NavigationPath()
+                                }
+                            } else {
+                                dismiss()
+                            }
                         }
                     }
                 }

@@ -106,6 +106,9 @@ final class PlannerViewModel {
     /// 여행 수정 시 수정된 여행지 목록
     var modifiedPlaceList: [PlaceDTO] = []
     
+    /// 여행 신규 생성 시 네비게이션 조작을 위한 변수
+    var navigationPath: Binding<NavigationPath>?
+    
     deinit {
         print(self, #function)
     }
