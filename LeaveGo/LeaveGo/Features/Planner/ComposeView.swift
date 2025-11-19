@@ -187,13 +187,19 @@ extension PlannerView.ComposeView {
         /// 각 행의 높이
         /// ScrollView 안에 있는 List의 특성 상 전체 높이를 계산해 지정해줘야 함
         @State var rowHeight: CGFloat = 0
+        @State var listHeight: CGFloat = 0
         /// List의 전체 높이를 계산하는 함수
         private func calculateListHeight() -> CGFloat {
-            let placeCount = CGFloat(selectedPlaces?.count ?? 0)
-            let contentHeight = placeCount * rowHeight
-            let spacing = placeCount > 1 ? placeCount * 36 : 0
+            guard let selectedPlaces else { return 0 }
             
-            return contentHeight + spacing
+            let placeCount = CGFloat(selectedPlaces.count)
+            let contentHeight = placeCount * rowHeight
+            let spacing = placeCount * 31
+            let padding = DesignToken.Layout.bottomActionButtonHeight
+            
+            let result = contentHeight + spacing + padding
+            
+            return result
         }
         
         /// 여행지 순서를 변경하는 함수
@@ -204,7 +210,7 @@ extension PlannerView.ComposeView {
         }
         
         var body: some View {
-            VStack(spacing: .zero) {
+            VStack(spacing: DesignToken.Spacing.medium) {
                 HStack {
                     SectionHeader(title: "여행지 *")
                     
@@ -235,21 +241,23 @@ extension PlannerView.ComposeView {
                                     Color.clear.onAppear {
                                         if rowHeight == 0 {
                                             rowHeight = geo.size.height
+                                            listHeight = calculateListHeight()
                                         }
                                     }
                                 }
                             )
                     }
                     .onMove(perform: move)
-                    
-                    Color.clear
-                        .frame(height: DesignToken.Layout.bottomActionButtonHeight + DesignToken.Spacing.xxxLarge)
                 }
             }
+            .onChange(of: selectedPlaces, { _, _ in
+                    listHeight = calculateListHeight()
+            })
             .listStyle(.plain)
             .scrollDisabled(true) // List의 자체 스크롤은 비활성화, 상위 ScrollView에서 전체 페이지 스크롤
+            .frame(minHeight: 300)
             .frame(
-                height: calculateListHeight(),
+                height: listHeight,
                 alignment: .top
             )
             .sheet(item: $selectedPlace) { place in
