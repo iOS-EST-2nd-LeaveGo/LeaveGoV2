@@ -209,6 +209,12 @@ extension PlannerView.ComposeView {
             selectedPlaces = places
         }
         
+        private func delete(_ source: IndexSet) {
+            guard var places = selectedPlaces else { return }
+            places.remove(atOffsets: source)
+            selectedPlaces = places
+        }
+        
         var body: some View {
             VStack(spacing: DesignToken.Spacing.medium) {
                 HStack {
@@ -248,6 +254,7 @@ extension PlannerView.ComposeView {
                             )
                     }
                     .onMove(perform: move)
+                    .onDelete(perform: delete)
                 }
             }
             .onChange(of: selectedPlaces, { _, _ in
