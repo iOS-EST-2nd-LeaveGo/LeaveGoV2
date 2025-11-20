@@ -23,7 +23,7 @@ struct PlannerView: View {
         NavigationStack(path: $path) {
             VStack {
                 if !planners.isEmpty {
-                    PlannerListView(plannerList: planners.map { $0.toPlannerDTO() }, path: $path)
+                    PlannerListView(planners: planners, path: $path)
                 } else {
                     PlannerPlaceholderView(path: $path)
                 }
@@ -61,20 +61,53 @@ extension PlannerView {
     /// - 카드 클릭 시 수정 모드로 이동
     /// - 마지막에 "새 여행 추가" 카드 표시
     struct PlannerListView: View {
-        var plannerList: [PlannerDTO]
+        let plannerRepository = PlannerRepository()
+        let planners: FetchedResults<Planner>
+        
         @Binding var path: NavigationPath
+        
+        @State var showDeleteAlert: Bool = false
+        @State var plannerToDelete: PlannerDTO? = nil
+        
+        private var plannerList: [PlannerDTO] {
+            planners.map { $0.toPlannerDTO() }
+        }
         
         let columns = [
             GridItem(.flexible(), spacing: DesignToken.Spacing.large),
             GridItem(.flexible())
         ]
         
+        private func deletePlanner(planner: PlannerDTO) {
+            if let plannerObject = planners.first(where: { $0.id == planner.id }) {
+                Task {
+                    try await plannerRepository.deletePlanner(plannerObject.objectID)
+                    resetDeleteData()
+                }
+            }
+        }
+        
+        private func resetDeleteData() {
+            plannerToDelete = nil
+            showDeleteAlert = false
+        }
+        
         var body: some View {
             ScrollView {
+                Text("ⓘ 여행을 길게 눌러 삭제할 수 있어요")
+                    .font(.footnote)
+                    .foregroundStyle(.lgLabelSecondary)
+                
                 LazyVGrid(columns: columns, spacing: DesignToken.Spacing.large) {
+                    
                     ForEach(plannerList) { planner in
                         NavigationLink(value: planner) {
                             PlannerCardView(planner: planner)
+                                .onLongPressGesture {
+                                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                                    plannerToDelete = planner
+                                    showDeleteAlert = true
+                                }
                         }
                     }
                     
@@ -86,6 +119,25 @@ extension PlannerView {
                 }
             }
             .padding(.horizontal, DesignToken.Spacing.large)
+            .animation(.easeInOut(duration: 0.3), value: plannerList)
+            .alert("여행 삭제", isPresented: $showDeleteAlert) {
+                Button("삭제", role: .destructive) {
+                    if let plannerToDelete {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            deletePlanner(planner: plannerToDelete)
+                        }
+                        resetDeleteData()
+                    }
+                }
+                
+                Button("취소", role: .cancel) {
+                    resetDeleteData()
+                }
+            } message: {
+                if let plannerToDelete {
+                    Text("\(plannerToDelete.title)을 정말 삭제하시겠어요? 이 작업은 되돌릴 수 없어요")
+                }
+            }
         }
     }
     
