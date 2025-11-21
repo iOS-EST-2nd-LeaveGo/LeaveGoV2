@@ -63,3 +63,18 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
         case title
     }
 }
+
+extension PlaceDTO {
+    func toPlannerPlaceDTO(with order: Int) -> PlannerPlaceDTO {
+        return PlannerPlaceDTO(
+            id: UUID(),
+            title: self.title,
+            contentID: self.id,
+            contentTypeID: self.contentTypeID,
+            thumbnail: self.thumbnailImage,
+            date: Date(),
+            order: Int16(order)
+        )
+    }
+}
+

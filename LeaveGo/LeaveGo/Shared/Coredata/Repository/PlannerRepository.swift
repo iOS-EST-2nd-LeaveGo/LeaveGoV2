@@ -16,6 +16,7 @@ final class PlannerRepository: PlannerRepositoryType {
     }
 
     // MARK: Planner와 Place 생성 or 업데이트
+    @discardableResult
     func upsertPlanner(_ dto: PlannerDTO, places: [PlannerPlaceDTO]) async throws -> NSManagedObjectID {
         let bgContext = pc.newBackgroundContext(author: "planner.upsert")
 
@@ -56,6 +57,7 @@ final class PlannerRepository: PlannerRepositoryType {
                     // Update
                     existing.title = dto.title
                     existing.contentID = dto.contentID
+                    existing.contentTypeID = dto.contentTypeID
                     existing.thumbnail = dto.thumbnail ?? ""
                     existing.date = dto.date
                     existing.order = dto.order
@@ -66,6 +68,7 @@ final class PlannerRepository: PlannerRepositoryType {
                     new.id = dto.id
                     new.title = dto.title
                     new.contentID = dto.contentID
+                    new.contentTypeID = dto.contentTypeID
                     new.thumbnail = dto.thumbnail ?? ""
                     new.date = dto.date
                     new.order = dto.order

@@ -9,10 +9,8 @@ import SwiftUI
 
 extension PlannerView {
     /// 여행 지역을 선택하는 뷰
-    /// PlannerViewModel을 생성하여 하위 뷰들로 전달
-    /// 지역 선택 전 단계로 돌아가면 ViewModel 해제 후 다시 생성
     struct AreaSelectionView: View {
-        @State private var plannerViewModel = PlannerViewModel()
+        @Environment(PlannerViewModel.self) var plannerViewModel
 
         /// 현재 선택된 지역
         @State private var selectedArea: Area?

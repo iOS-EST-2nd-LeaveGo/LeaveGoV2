@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24E248" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Bookmark" representedClassName=".Bookmark" syncable="YES" codeGenerationType="class">
         <attribute name="contentID" attributeType="String"/>
         <attribute name="createAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -17,6 +17,7 @@
     </entity>
     <entity name="PlannerPlace" representedClassName=".PlannerPlace" syncable="YES" codeGenerationType="class">
         <attribute name="contentID" attributeType="String"/>
+        <attribute name="contentTypeID" attributeType="String"/>
         <attribute name="createAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>

@@ -15,6 +15,8 @@ struct CommonTextField: View {
     @Binding var value: String
     /// 필드가 비어있을 때 보여줄 플레이스홀더 텍스트
     let prompt: String
+    /// 필드의 포커스 상태를 담는 상태 변수
+    @FocusState.Binding var isFocused: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: DesignToken.Spacing.medium) {
@@ -32,10 +34,14 @@ struct CommonTextField: View {
                     RoundedRectangle(cornerRadius: DesignToken.Radius.medium)
                         .fill(.lgTextField)
                 )
+                .focused($isFocused)
         }
     }
 }
 
 #Preview {
-    CommonTextField(label: "dd", value: .constant("dd"), prompt: "여행의 이름을 입력하세요")
+    @FocusState var isFocused: Bool
+    
+    CommonTextField(label: "여행 이름", value: .constant("서울 여행"), prompt: "여행의 이름을 입력하세요", isFocused: $isFocused)
+        .padding(.horizontal)
 }

@@ -19,9 +19,11 @@ extension PlannerView {
                         .clipped()
                     
                     Text(planner.title)
+                        .foregroundStyle(.lgLabel)
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
-                        .padding(DesignToken.Spacing.large)
+                        .padding(.horizontal, DesignToken.Spacing.large)
+                        .padding(.vertical, DesignToken.Spacing.medium)
                         .frame(maxHeight: .infinity)
                 } else {
                     VStack {
@@ -37,6 +39,7 @@ extension PlannerView {
             }
             .aspectRatio(3/4, contentMode: .fit)
             .cornerRadius(DesignToken.Radius.small)
+            .background(.lgBackground) // 여행 제목 영역의 빈 공간까지 LongPress 제스처 영역을 늘리고자 배경색 추가
             .overlay {
                 RoundedRectangle(cornerRadius: DesignToken.Radius.small)
                     .strokeBorder(.lgBorderProminent, lineWidth: 1)
@@ -46,6 +49,24 @@ extension PlannerView {
 }
 
 #Preview {
-    PlannerView.PlannerCardView(planner: mockPlanners.first!)
+    let previewPlanner: PlannerDTO = PlannerDTO(
+        id: UUID(),
+        title: "광화문 여행",
+        startDate: Date(),
+        endDate: Date(),
+        thumbnail: nil,
+        placeList: [
+            PlannerPlaceDTO(
+                id: UUID(),
+                title: "광화문",
+                contentID: "1",
+                contentTypeID: "12",
+                thumbnail: nil,
+                date: Date(),
+                order: 1)
+        ]
+    )
+    
+    PlannerView.PlannerCardView(planner: previewPlanner)
         .padding()
 }
