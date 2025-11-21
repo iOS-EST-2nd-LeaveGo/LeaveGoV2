@@ -16,12 +16,7 @@ extension PlannerView {
         
         /// 여행을 담는 변수
         /// nil이면 여행 신규 생성, 데이터가 있으면 기존 여행 수정
-        var planner: PlannerDTO? = nil
-        
-        /// 생성/수정 모드를 구분하는 computed property
-        private var isNewPlanner: Bool {
-            return planner == nil
-        }
+        var planner: PlannerDTO?
         
         /// 현재 표시할 장소 목록을 담는 상태 변수
         /// - 신규 생성 시: PlaceSelection에서 주입받은 데이터
@@ -32,7 +27,19 @@ extension PlannerView {
         @State var selectedPlace: PlaceDTO?
         
         /// 저장 버튼의 활성화 여부를 결정하는 상태 변수 (여행 제목이 입력되면 true)
-        @State var shouldProceed: Bool = false
+        @State var shouldProceed: Bool
+        
+        /// 생성/수정 모드를 구분하는 computed property
+        private var isNewPlanner: Bool {
+            return planner == nil
+        }
+        
+        init(planner: PlannerDTO? = nil, selectedPlaces: [PlaceDTO]? = nil) {
+            self.planner = planner
+            _selectedPlaces = State(initialValue: selectedPlaces)
+            self.selectedPlace = nil
+            self.shouldProceed = false
+        }
         
         var body: some View {
             ZStack(alignment: .bottom) {

@@ -146,7 +146,7 @@ final class PlannerViewModel {
         
         // PlaceDTO를 PlannerPlaceDTO로 변환하며 순서(order) 정보 추가
         var plannerPlaceList = [PlannerPlaceDTO]()
-        for index in 0 ... (placeList.count - 1) {
+        for index in 0 ..< placeList.count {
             let place = placeList[index]
             plannerPlaceList.append(
                 place.toPlannerPlaceDTO(with: index)
