@@ -81,6 +81,8 @@ extension PlannerView {
             .onAppear {
                 // 수정 모드일 때 초기 데이터 설정
                 if !isNewPlanner { configureForEditing() }
+                // 저장 버튼의 상태를 업데이트
+                shouldProceed = !(plannerViewModel.titleBinding.wrappedValue.isEmpty)
             }
             .onChange(of: plannerViewModel.plannerTitle, { _, newValue in
                 // 여행 제목이 입력되면 저장 버튼 활성화
@@ -107,8 +109,6 @@ extension PlannerView.ComposeView {
         guard let planner else { return }
         plannerViewModel.planner = planner
         selectedPlaces = planner.placeList.map { $0.toPlaceDTO() }
-        // 저장 버튼을 수동 활성화
-        shouldProceed = true
     }
     
     private struct PlannerNameSection: View {
