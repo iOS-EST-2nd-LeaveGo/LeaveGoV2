@@ -29,6 +29,9 @@ extension PlannerView {
         /// 저장 버튼의 활성화 여부를 결정하는 상태 변수 (여행 제목이 입력되면 true)
         @State var shouldProceed: Bool
         
+        /// 여행 이름 텍스트 필드의 포커스 상태를 결정하는 상태 변수
+        @FocusState var isFocused: Bool
+        
         /// 생성/수정 모드를 구분하는 computed property
         private var isNewPlanner: Bool {
             return planner == nil
@@ -47,7 +50,7 @@ extension PlannerView {
                 ScrollView {
                     VStack(alignment: .leading, spacing: DesignToken.Spacing.xxxLarge) {
                         // 여행 제목 입력 섹션
-                        PlannerNameSection()
+                        PlannerNameSection(isFocused: $isFocused)
                             .padding(.horizontal, DesignToken.Spacing.large)
                         
                         // 썸네일 이미지 선택 섹션
@@ -62,6 +65,15 @@ extension PlannerView {
                     }
                 }
                 .frame(maxHeight: .infinity)
+                .onTapGesture {
+                    isFocused = false
+                }
+                .simultaneousGesture(
+                    DragGesture()
+                        .onChanged({ _ in
+                            isFocused = false
+                        })
+                )
                 
                 // 하단 고정 액션 버튼
                 BottomActionButton(
@@ -86,8 +98,13 @@ extension PlannerView {
                 }
             }
             .onAppear {
-                // 수정 모드일 때 초기 데이터 설정
-                if !isNewPlanner { configureForEditing() }
+                if !isNewPlanner {
+                    // 수정 모드일 때 초기 데이터 설정
+                    configureForEditing()
+                } else {
+                    // 생성 모드일 때는 뷰 진입과 동시에 키보드 활성화
+                    isFocused = true
+                }
                 // 저장 버튼의 상태를 업데이트
                 shouldProceed = !(plannerViewModel.titleBinding.wrappedValue.isEmpty)
             }
@@ -120,12 +137,15 @@ extension PlannerView.ComposeView {
     
     private struct PlannerNameSection: View {
         @Environment(PlannerViewModel.self) var plannerViewModel
+
+        @FocusState.Binding var isFocused: Bool
         
         var body: some View {
             CommonTextField(
                 label: "제목 *",
                 value: plannerViewModel.titleBinding,
-                prompt: "여행의 제목을 입력하세요"
+                prompt: "여행의 제목을 입력하세요",
+                isFocused: $isFocused
             )
         }
     }
