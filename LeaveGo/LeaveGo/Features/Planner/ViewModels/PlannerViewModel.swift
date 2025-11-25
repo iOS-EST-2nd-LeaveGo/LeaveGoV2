@@ -26,7 +26,6 @@ final class PlannerViewModel {
                 placeList = []
             }
             Task {
-                print(#function)
                 await fetchPlaceList()
             }
         }
@@ -40,7 +39,6 @@ final class PlannerViewModel {
             // 2. page 변경 전후의 값이 같은 경우 = 무한스크롤 중복 트리거 방지
             guard page != 1, oldValue != page else { return }
             Task {
-                print(#function)
                 await fetchPlaceList()
             }
         }
