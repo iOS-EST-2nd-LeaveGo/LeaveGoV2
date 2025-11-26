@@ -32,9 +32,9 @@ struct PlaceDTO: Codable, Hashable, Identifiable {
     let bigThumbnailImage: String?
     /// 썸네일이미지
     let thumbnailImage: String?
-    /// 경도
+    /// 경도 (longitude)
     let mapX: String?
-    /// 위도
+    /// 위도(latitude)
     let mapY: String?
     /// 전화번호
     let tel: String?

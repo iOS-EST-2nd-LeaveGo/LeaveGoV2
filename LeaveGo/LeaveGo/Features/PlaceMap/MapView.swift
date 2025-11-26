@@ -12,21 +12,16 @@ import Combine
 
 // MARK: - MapView
 struct MapView: View {
-
-    @State private var userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
-    @State private var isLocationLoaded = false
-    @State private var showLocationError = false
-    @State private var errorMessage: String = ""
+    @Environment(MapViewModel.self) private var viewModel
     
     var body: some View {
         ZStack {
-            NaverMapView(coord: userLocation,
-                         isLoacationLoaded: $isLocationLoaded)
+            NaverMapView()
+                .environment(viewModel)
             
-            if !isLocationLoaded {
-                Rectangle()
-                    .fill(Color("lgAccentColor"))
-                
+            if !viewModel.isLocationLoaded {
+                Color("lgAccentColor")
+                    .ignoresSafeArea()
                 Image("img_logoWithNoBg")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -37,9 +32,12 @@ struct MapView: View {
         }
         .edgesIgnoringSafeArea(.vertical)
         .task {
-            requestUserLocation()
+            await viewModel.fetchPlaceList()
         }
-        .alert("위치 오류", isPresented: $showLocationError) {
+        .alert("위치 오류", isPresented: Binding(
+            get: { viewModel.showLocationError },
+            set: { viewModel.showLocationError = $0 }
+        )) {
             Button("설정으로 이동") {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
@@ -47,40 +45,15 @@ struct MapView: View {
             }
             Button("확인", role: .cancel) {}
         } message: {
-            Text(errorMessage)
-        }
-    }
-    
-    @MainActor
-    private func requestUserLocation() {
-        LocationManager.shared.requestLocationPermission()
-        
-        LocationManager.shared.requestSingleLocation { result in
-            switch result {
-            case .success(let location):
-                print("✅ 위치 획득 성공: \(location.coordinate.latitude), \(location.coordinate.longitude)")
-                
-                Task {
-                    self.userLocation = location.coordinate
-                    self.isLocationLoaded = true
-                }
-            case .failure(let error):
-                print("❌ 위치 획득 실패: \(error.localizedDescription)")
-                
-                Task {
-                    self.errorMessage = error.localizedDescription
-                    self.showLocationError = true
-                    self.isLocationLoaded = true
-                }
-            }
+            Text(viewModel.errorMessage)
         }
     }
 }
 
 // MARK: - NaverMapView
 struct NaverMapView: UIViewRepresentable {
-    var coord: CLLocationCoordinate2D
-    @Binding var isLoacationLoaded: Bool
+    
+    @Environment(MapViewModel.self) private var viewModel
     
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
@@ -91,13 +64,14 @@ struct NaverMapView: UIViewRepresentable {
         
         view.showZoomControls = false
         view.mapView.positionMode = .direction
-        view.mapView.zoomLevel = 17
+        view.mapView.zoomLevel = 15
         
         view.mapView.isIndoorMapEnabled = true
         
         view.showLocationButton = true
         view.showCompass = true
         
+        /// 사용자 위치 annotation layout
         let locationOverlay = view.mapView.locationOverlay
         locationOverlay.icon = NMFOverlayImage(name: "img_userLocation")
         locationOverlay.iconWidth = 25
@@ -105,22 +79,23 @@ struct NaverMapView: UIViewRepresentable {
         locationOverlay.anchor = CGPoint(x: 0, y: 0)
         locationOverlay.circleRadius = 0
         
-        let cameraPosition = NMFCameraPosition(NMGLatLng(lat: coord.latitude,
-                                                         lng: coord.longitude),
-                                               zoom: 17)
-        
+        /// 미리 NaverMap을 Loading하기 위한 임시 Location
+        let defaultCoord = NMGLatLng(lat: 37.5665, lng: 126.9780)
+        let cameraPosition = NMFCameraPosition(defaultCoord, zoom: 15)
         view.mapView.moveCamera(NMFCameraUpdate(position: cameraPosition))
         
         return view
     }
     
     func updateUIView(_ uiView: NMFNaverMapView, context: Context) {
-        let nmgCoord = NMGLatLng(lat: coord.latitude,
-                                 lng: coord.longitude)
+        guard let location = viewModel.userLocation else { return }
+        
+        let nmgCoord = NMGLatLng(lat: location.latitude,
+                                 lng: location.longitude)
         let cameraUpdate = NMFCameraUpdate(scrollTo: nmgCoord)
+        
         cameraUpdate.animation = .easeIn
         cameraUpdate.animationDuration = 0.5
-        
         uiView.mapView.moveCamera(cameraUpdate)
     }
 }
