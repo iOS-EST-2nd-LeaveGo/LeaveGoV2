@@ -38,7 +38,14 @@ struct PlaceListRow: View {
                     // 모드에 따른 행의 머리 이미지 보여주기
                     LeadingAccessory(listMode: listMode, isSelected: isSelected)
                     
-                    PlaceholderImageView()
+                    ZStack {
+                        PlaceholderImageView()
+                        
+                        if let imageURL = place.thumbnailImage,
+                           let url = URL(string: imageURL) {
+                            ThumbnailImageView(url: url)
+                        }
+                    }
                     
                     VStack(alignment: .leading, spacing: DesignToken.Spacing.small) {
                         Text(CategoryCodeMapper.name(for: place.cat1 ?? "기타"))
@@ -53,6 +60,7 @@ struct PlaceListRow: View {
                     
                     Spacer()
                 }
+                .background(.background)
             }
             
             // 액세서리가 탭되었을 때 실행할 액션이 있다면 행의 꼬리 버튼 보여주기
@@ -63,46 +71,83 @@ struct PlaceListRow: View {
         .frame(maxWidth: .infinity)
         .listRowSeparator(.hidden)
     }
-}
-
-struct LeadingAccessory: View {
-    let listMode: ListMode
-    var isSelected: Bool = false
     
-    var body: some View {
-        switch listMode {
-        case .plain:
-            EmptyView()
-        case .selectable:
-            // TODO: 선택 됐을 때는 체크마크 대신 번호 추가하는 것으로 수정하기
-            Image(systemName: isSelected ? "checkmark.circle.fill" : "checkmark.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24)
-                .foregroundStyle(.lgAccent)
-        case .draggable:
-            Image(systemName: "line.3.horizontal")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 16)
-                .foregroundStyle(.lgLabelSecondary)
+    private struct LeadingAccessory: View {
+        let listMode: ListMode
+        var isSelected: Bool = false
+        
+        var body: some View {
+            switch listMode {
+            case .plain:
+                EmptyView()
+            case .selectable:
+                // TODO: 선택 됐을 때는 체크마크 대신 번호 추가하는 것으로 수정하기
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "checkmark.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24)
+                    .foregroundStyle(.lgAccent)
+            case .draggable:
+                Image(systemName: "line.3.horizontal")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16)
+                    .foregroundStyle(.lgLabelSecondary)
+            }
         }
     }
-}
-
-struct TrailingAccessoryButton: View {
-    let listMode: ListMode
-    let accessoryAction: (() -> Void)
     
-    var body: some View {
-        Button {
-            accessoryAction()
-        } label: {
-            Image(systemName: listMode == .plain ? "ellipsis" : "info.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24)
-                .foregroundStyle(.lgAccent)
+    private struct ThumbnailImageView: View {
+        private let imageRepository = ImageRepository.shared
+        private let radius = DesignToken.Radius.medium
+        
+        let url: URL
+        
+        @State var image: UIImage? = nil
+        
+        var body: some View {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(.clear)
+                .frame(width: 50, height: 50)
+                .background(
+                    ZStack {
+                        if let image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: radius)
+                        .strokeBorder(.lgBorderProminent.opacity(0.5))
+                )
+                .clipShape(
+                    RoundedRectangle(cornerRadius: radius)
+                )
+                .task {
+                    image = await imageRepository.loadImage(from: url) ?? UIImage()
+                }
+        }
+    }
+    
+    private struct TrailingAccessoryButton: View {
+        let listMode: ListMode
+        let accessoryAction: (() -> Void)
+        
+        var body: some View {
+            Button {
+                accessoryAction()
+            } label: {
+                Image(systemName: listMode == .plain ? "ellipsis" : "info.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24)
+                    .foregroundStyle(.lgAccent)
+            }
         }
     }
 }
@@ -120,7 +165,7 @@ struct TrailingAccessoryButton: View {
             contentTypeID: "11",
             dist: nil,
             bigThumbnailImage: nil,
-            thumbnailImage: nil,
+            thumbnailImage: "http://tong.visitkorea.or.kr/cms/resource/25/2878225_image2_1.jpg",
             mapX: nil,
             mapY: nil,
             tel: nil,

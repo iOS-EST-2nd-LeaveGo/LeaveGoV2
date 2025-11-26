@@ -30,7 +30,7 @@ struct PlaceholderImageView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
-                .strokeBorder(.lgBorderProminent)
+                .strokeBorder(.lgBorderProminent.opacity(0.5))
         )
     }
 }
