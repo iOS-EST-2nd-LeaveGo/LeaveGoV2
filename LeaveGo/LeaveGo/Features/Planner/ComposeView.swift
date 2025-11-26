@@ -307,7 +307,7 @@ extension PlannerView.ComposeView {
             )
             .sheet(item: $selectedPlace) { place in
                 PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
-                    .presentationDetents([.fraction(0.4), .large])
+                    .presentationDetents([.medium, .large])
             }
             .alert(
                 "여행지 다시 선택하기",
@@ -329,7 +329,7 @@ extension PlannerView.ComposeView {
                 NavigationStack {
                     PlannerView.AreaSelectionView()
                         .environment(plannerViewModel)
-                        .presentationDetents([.fraction(0.8), .large])
+                        .presentationDetents([.medium, .large])
                 }
             }
         }

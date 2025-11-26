@@ -129,7 +129,7 @@ struct PlaceListRow: View {
                     RoundedRectangle(cornerRadius: radius)
                 )
                 .task {
-                    image = await imageRepository.loadImage(from: url) ?? UIImage()
+                    image = await imageRepository.loadImage(from: url)
                 }
         }
     }
