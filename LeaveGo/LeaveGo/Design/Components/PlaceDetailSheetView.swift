@@ -9,8 +9,6 @@ import SwiftUI
 
 /// 여행지 상세정보를 표시하는 시트 뷰
 struct PlaceDetailSheetView: View {
-    private let imageRepository: ImageRepository = .shared
-    
     /// 표시할 여행지 정보
     let place: PlaceDTO
     /// 하단 액션 버튼의 제목
@@ -215,6 +213,5 @@ extension PlaceDetailSheetView {
         .frame(height: 400)
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .environment(ImageRepository.shared)
     }
 }
