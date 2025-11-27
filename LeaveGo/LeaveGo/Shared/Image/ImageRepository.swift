@@ -8,20 +8,21 @@
 import SwiftUI
 
 /// 이미지 캐싱과 로딩을 관리하는 Repository
+/// 프로토콜 기반 ImageService를 주입받아 테스트/대체 구현이 가능하도록 설계
 /// NSCache를 사용한 메모리 캐싱으로 성능 최적화 제공
 @Observable
 final class ImageRepository {
     /// 싱글톤 인스턴스
     static let shared = ImageRepository()
     /// 실제 이미지 다운로드를 담당하는 매니저
-    let imageManager: ImageManager
+    let imageManager: ImageService
     
     /// URL을 키로 하는 이미지 메모리 캐시
     private let cache = NSCache<NSString, UIImage>()
     
     /// 의존성 주입을 지원하는 생성자 (테스트용)
     /// - Parameter imageManager: 이미지 다운로드를 담당하는 매니저, 기본값은 shared 인스턴스
-    private init(imageManager: ImageManager = .shared) {
+    init(imageManager: ImageService = ImageManager.shared) {
         self.imageManager = imageManager
         
         // 캐시 설정: 최대 100개 이미지, 30MB 메모리 제한
