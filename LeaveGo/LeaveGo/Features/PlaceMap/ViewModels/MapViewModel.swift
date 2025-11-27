@@ -7,30 +7,37 @@
 
 import SwiftUI
 import CoreLocation
+import NMapsMap
 
 @MainActor
 @Observable
-final class MapViewModel: ObservableObject {
+final class MapViewModel {
     
+    // MARK: - Properties
     public var userLocation: CLLocationCoordinate2D?
+    public var placeList: [PlaceDTO] = []
+    public var selectedPlaceId: String?
+    public var cameraPosition = NMGLatLng(lat: 37.5666, lng: 126.9784)
+    
+    public var selectedPlace: PlaceDTO? {
+        placeList.first { $0.id == selectedPlaceId }
+    }
     
     /// 여행지 API 요청을 처리하는 리포지토리
     private let placeRepository = PlaceRepository()
-    
-    private var placeList: [PlaceDTO] = []
     
     public var errorMessage: String = ""
     private var isLoading = false
     public var isLocationLoaded = false
     public var showLocationError = false
     
-    // MARK: Init
+    // MARK: - Init
     
     init() {
         self.requestUserLocation()
     }
     
-    // MARK: LocationManager
+    // MARK: - LocationManager
     
     @MainActor
     public func requestUserLocation() {
@@ -41,14 +48,15 @@ final class MapViewModel: ObservableObject {
             case .success(let location):
                 print("✅ 위치 획득 성공: \(location.coordinate.latitude), \(location.coordinate.longitude)")
                 
-                Task {
+                Task { @MainActor in
                     self.userLocation = location.coordinate
                     self.isLocationLoaded = true
                 }
+                
             case .failure(let error):
                 print("❌ 위치 획득 실패: \(error.localizedDescription)")
                 
-                Task {
+                Task { @MainActor in
                     self.errorMessage = error.localizedDescription
                     self.showLocationError = true
                     self.isLocationLoaded = true
@@ -57,9 +65,8 @@ final class MapViewModel: ObservableObject {
         }
     }
     
-    // MARK: Network
+    // MARK: - Network
     
-    // , let location = userLocation
     /// 선택된 지역의 여행지 목록을 API로부터 가져오는 함수
     @MainActor
     func fetchPlaceList() async {
@@ -70,14 +77,27 @@ final class MapViewModel: ObservableObject {
         isLoading = true
         
         do {
-            guard let body = try await placeRepository.fetchPlaceList(endpoint: LocationBasedEndpoint(page: 1, numOfRows: 30, mapX: location.longitude, mapY: location.latitude, radius: 5000, contentType: .shopping, arrange: "O")),
-                  body.totalCount > 0 else { return }
+            guard let body = try await placeRepository.fetchPlaceList(
+                endpoint: LocationBasedEndpoint(
+                    page: 1,
+                    numOfRows: 30,
+                    mapX: location.longitude,
+                    mapY: location.latitude,
+                    radius: 5000,
+                    contentType: .shopping,
+                    arrange: "O"
+                )
+            ),
+            body.totalCount > 0 else {
+                print(#function, "⚠️ 검색 결과 없음")
+                return
+            }
             
             placeList = body.items.content
             
-            print(#function, "✅ successfully \(placeList) in \(location)")
+            print(#function, "✅ \(placeList.count)개 장소 로드 완료")
         } catch {
-            print(#function, "🔥 \(location) 지역에 장소가 없음")
+            print(#function, "🔥 에러: \(error.localizedDescription)")
         }
     }
 }
