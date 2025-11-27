@@ -19,6 +19,18 @@ struct PlaceDetailSheetView: View {
     /// 데이터 로딩 상태
     @State private var isLoading: Bool = false
     
+    /// 네이버 지도앱으로 연결을 시도하고, 실패시 대체 URL을 열어주는 함수
+    /// - Parameters:
+    ///   - primaryURL: 우선적으로 열려고 시도할 URL (앱 스킴)
+    ///   - fallbackURL: 첫 번째 URL이 실패했을 때 열 대체 URL
+    private func openNaverMap(primaryURL: URL, fallbackURL: URL) {
+        if UIApplication.shared.canOpenURL(primaryURL) {
+            UIApplication.shared.open(primaryURL)
+        } else {
+            UIApplication.shared.open(fallbackURL)
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             // 메인 콘텐츠 스크롤 영역
@@ -65,8 +77,15 @@ struct PlaceDetailSheetView: View {
             .frame(maxHeight: .infinity)
             
             // 하단 액션 버튼
-            BottomActionButton(title: buttonTitle, imageName: "arrow.trianglehead.turn.up.right.circle.fill", isEnabled: true) {
-                // TODO: 경로 찾기 기능 완성되면 액션 추가하기
+            BottomActionButton(title: buttonTitle, imageName: "map.fill", isEnabled: true) {
+                guard let longitude = place.mapX,
+                      let latitude = place.mapY,
+                      let encordedTitle = place.title.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else { return }
+                
+                if let url = URL(string: "nmap://place?lat=\(latitude)&lng=\(longitude)&name=\(encordedTitle)&appname=com.leavego2.LeaveGo"),
+                   let appStoreURL = URL(string: "http://itunes.apple.com/app/id311867728?mt=8") {
+                    openNaverMap(primaryURL: url, fallbackURL: appStoreURL)
+                }
             }
         }
         .task(id: place.id) {

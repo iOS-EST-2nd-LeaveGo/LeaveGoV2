@@ -55,7 +55,7 @@ extension PlannerView {
                     .buttonStyle(.plain)
                     // 여행지 상세 정보 시트
                     .sheet(item: $selectedPlaceForDetails) { place in
-                        PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                        PlaceDetailSheetView(place: place, buttonTitle: "네이버 지도에서 보기")
                             .presentationDetents([.medium, .large])
                     }
                 } else {

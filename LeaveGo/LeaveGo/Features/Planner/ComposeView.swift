@@ -304,7 +304,7 @@ extension PlannerView.ComposeView {
                 alignment: .top
             )
             .sheet(item: $selectedPlace) { place in
-                PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                PlaceDetailSheetView(place: place, buttonTitle: "네이버 지도에서 보기")
                     .presentationDetents([.medium, .large])
             }
             .alert(
