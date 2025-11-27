@@ -103,7 +103,7 @@ struct PlaceListRow: View {
         
         let url: URL
         
-        @State var image: UIImage? = nil
+        @State private var image: UIImage? = nil
         
         var body: some View {
             RoundedRectangle(cornerRadius: radius)
