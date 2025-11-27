@@ -98,7 +98,7 @@ struct PlaceListRow: View {
     }
     
     private struct ThumbnailImageView: View {
-        private let imageRepository = ImageRepository.shared
+        private let imageRepository: ImageRepository = .shared
         private let radius = DesignToken.Radius.medium
         
         let url: URL

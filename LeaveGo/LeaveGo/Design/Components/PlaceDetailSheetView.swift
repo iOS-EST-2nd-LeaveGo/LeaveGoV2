@@ -80,7 +80,7 @@ struct PlaceDetailSheetView: View {
     /// 이미지의 URL을 받아 여행지 상세 이미지를 표시하는 컴포넌트
     private struct ImageView: View {
         /// 이미지 캐싱과 로딩을 담당하는 Repository
-        let imageRepository: ImageRepository = .shared
+        private let imageRepository: ImageRepository = .shared
         
         /// 로드할 이미지의 URL
         let imageURL: URL?
