@@ -55,7 +55,13 @@ extension PlannerView {
                         
                         // 썸네일 이미지 선택 섹션
                         ThumbnailSection()
+                            .background(.background)
                             .padding(.horizontal, DesignToken.Spacing.large)
+                            .onTapGesture {
+                                if isFocused {
+                                    isFocused = false
+                                }
+                            }
                         
                         // 선택된 여행지 목록 표시
                         if selectedPlaces != nil {
@@ -65,15 +71,7 @@ extension PlannerView {
                     }
                 }
                 .frame(maxHeight: .infinity)
-                .onTapGesture {
-                    isFocused = false
-                }
-                .simultaneousGesture(
-                    DragGesture()
-                        .onChanged({ _ in
-                            isFocused = false
-                        })
-                )
+                .scrollDismissesKeyboard(.interactively)
                 
                 // 하단 고정 액션 버튼
                 BottomActionButton(

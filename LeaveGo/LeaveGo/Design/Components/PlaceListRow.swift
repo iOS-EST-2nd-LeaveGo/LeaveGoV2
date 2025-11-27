@@ -173,6 +173,7 @@ struct PlaceListRow: View {
         ),
         listMode: .selectable,
         rowAction: nil,
-        accessoryAction: nil
+        accessoryAction: {}
     )
+    .padding(.horizontal)
 }
