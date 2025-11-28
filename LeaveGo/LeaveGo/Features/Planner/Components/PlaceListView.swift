@@ -56,7 +56,7 @@ extension PlannerView {
                     // 여행지 상세 정보 시트
                     .sheet(item: $selectedPlaceForDetails) { place in
                         PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
-                            .presentationDetents([.fraction(0.4), .large])
+                            .presentationDetents([.medium, .large])
                     }
                 } else {
                     // 데이터 로딩 표시

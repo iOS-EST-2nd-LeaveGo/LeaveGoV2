@@ -13,7 +13,7 @@ struct PlaceDetailSheetView: View {
     let place: PlaceDTO
     /// 하단 액션 버튼의 제목
     let buttonTitle: String
-
+    
     /// 여행지 상세 정보 (API로부터 가져옴)
     @State private var detailInfo: PlaceDetailDTO? = nil
     /// 데이터 로딩 상태
@@ -29,19 +29,25 @@ struct PlaceDetailSheetView: View {
                         Text(place.title)
                             .font(.title3)
                             .bold()
-
+                        
                         Spacer()
                     }
-
+                    
+                    // 썸네일 이미지
+                    if let thumbnailImage = place.bigThumbnailImage,
+                       !thumbnailImage.isEmpty {
+                        ImageView(imageURL: URL(string: thumbnailImage) ?? nil)
+                    }
+                    
                     // 상세 정보 행들
                     DetailLabelRow(isLoading: $isLoading, label: "휴무일", value: detailInfo?.restDate)
                     DetailLabelRow(isLoading: $isLoading, label: "운영시간", value: detailInfo?.openTime)
-
+                    
                     // 주소 정보
                     if let addr1 = place.addr1, !addr1.isEmpty {
                         Text("\(addr1) \(place.addr2 ?? "")")
                     }
-
+                    
                     // 전화번호
                     if let tel = place.tel, !tel.isEmpty {
                         if let url = URL(string: "tel://\(tel)") {
@@ -50,13 +56,14 @@ struct PlaceDetailSheetView: View {
                             Text(tel)
                         }
                     }
-
+                    
                     Spacer()
+                        .padding(.bottom, DesignToken.Layout.bottomActionButtonHeight)
                 }
             }
             .padding()
             .frame(maxHeight: .infinity)
-
+            
             // 하단 액션 버튼
             BottomActionButton(title: buttonTitle, imageName: "arrow.trianglehead.turn.up.right.circle.fill", isEnabled: true) {
                 // TODO: 경로 찾기 기능 완성되면 액션 추가하기
@@ -68,29 +75,61 @@ struct PlaceDetailSheetView: View {
         }
     }
     
+    /// 이미지의 URL을 받아 여행지 상세 이미지를 표시하는 컴포넌트
+    private struct ImageView: View {
+        /// 이미지 캐싱과 로딩을 담당하는 Repository
+        private let imageRepository: ImageRepository = .shared
+        
+        /// 로드할 이미지의 URL
+        let imageURL: URL?
+        
+        /// 로드된 이미지를 저장하는 상태 변수
+        @State var image: UIImage?
+        
+        var body: some View {
+            VStack {
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.small))
+                        .frame(maxHeight: 300, alignment: .leading)
+                } else {
+                    EmptyView()
+                }
+            }
+            .padding(.vertical, DesignToken.Spacing.small)
+            .task {
+                // URL이 유효할 때만 이미지 로드 시작
+                guard let imageURL else { return }
+                image = await imageRepository.loadImage(from: imageURL)
+            }
+        }
+    }
+    
     /// 상세 정보 레이블과 값을 표시하는 행 컴포넌트
     private struct DetailLabelRow: View {
         /// 로딩 상태 바인딩
         @Binding var isLoading: Bool
-
+        
         /// 레이블 텍스트
         let label: String
         /// 표시할 값 (nil일 수 있음)
         let value: String?
-
+        
         /// 상세 정보 가져오기 상태
         private enum DetailFetchStatus: String {
             case noData = "정보 없음"
             case loading = "로딩 중.."
         }
-
+        
         /// 플레이스홀더 텍스트 뷰 생성
         private func placeholderTextView(status: DetailFetchStatus) -> some View {
             Text(status.rawValue)
                 .font(.footnote)
                 .foregroundStyle(.lgLabelSecondary)
         }
-
+        
         var body: some View {
             HStack(alignment: .top, spacing: DesignToken.Spacing.medium) {
                 // 레이블 (태그 스타일)
@@ -149,7 +188,7 @@ extension PlaceDetailSheetView {
 
 #Preview {
     ZStack(alignment: .bottom) {
-        Color.black.opacity(0.1)
+        Color.gray.opacity(0.3)
         
         PlaceDetailSheetView(
             place: PlaceDTO(
@@ -162,8 +201,8 @@ extension PlaceDetailSheetView {
                 id: "2667909",
                 contentTypeID: "12",
                 dist: nil,
-                bigThumbnailImage: Optional(""),
-                thumbnailImage: Optional(""),
+                bigThumbnailImage: Optional("http://tong.visitkorea.or.kr/cms/resource/25/2878225_image2_1.jpg"),
+                thumbnailImage: Optional("http://tong.visitkorea.or.kr/cms/resource/25/2878225_image2_1.jpg"),
                 mapX: Optional("128.7199264348"),
                 mapY: Optional("35.8799433837"),
                 tel: Optional(""),
