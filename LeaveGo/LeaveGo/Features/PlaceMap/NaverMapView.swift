@@ -49,7 +49,7 @@ struct NaverMapView: UIViewRepresentable {
         locationOverlay.circleRadius = 0
         
         // 기본 위치 (서울)
-        let cameraUpdate = NMFCameraUpdate(scrollTo: viewModel.cameraPosition)
+        let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: 37.5666, lng: 126.9784))
         view.mapView.moveCamera(cameraUpdate)
         
         return view
