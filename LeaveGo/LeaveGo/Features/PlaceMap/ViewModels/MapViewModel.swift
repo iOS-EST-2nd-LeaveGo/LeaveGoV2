@@ -22,7 +22,8 @@ final class MapViewModel {
     public var userLocation: CLLocationCoordinate2D?
     public var placeList: [PlaceDTO] = []
     public var selectedPlaceId: String?
-    public var cameraPosition = NMGLatLng(lat: 37.5666, lng: 126.9784)
+    public var cameraPosition = NMGLatLng(lat: 37.5666, lng: 126.9784) // 일회용 (제거)
+    private var previousSelectedPlaceId: String?
     
     public var selectedPlace: PlaceDTO? {
         placeList.first { $0.id == selectedPlaceId }
@@ -32,7 +33,7 @@ final class MapViewModel {
     private let placeRepository = PlaceRepository()
     
     public var errorMessage: String = ""
-    private var isLoading = false
+    private var isPlaceListFetchLoading = false
     public var isLocationLoaded = false
     public var showLocationError = false
     
@@ -40,6 +41,12 @@ final class MapViewModel {
     
     init() {
         self.requestUserLocation()
+    }
+    
+    // MARK: Method
+    
+    func getPreviousSelectedPlaceId() -> String? {
+        return previousSelectedPlaceId
     }
     
     // MARK: - LocationManager
@@ -75,11 +82,11 @@ final class MapViewModel {
     /// 선택된 지역의 여행지 목록을 API로부터 가져오는 함수
     @MainActor
     func fetchPlaceList() async {
-        defer { isLoading = false }
-        guard !isLoading else { return }
+        defer { isPlaceListFetchLoading = false }
+        guard !isPlaceListFetchLoading else { return }
         guard let location = userLocation else { return }
         
-        isLoading = true
+        isPlaceListFetchLoading = true
         
         do {
             guard let body = try await placeRepository.fetchPlaceList(
@@ -111,6 +118,12 @@ final class MapViewModel {
 
 extension MapViewModel: NaverMapViewDelegate {
     func setSelectedPlaceId(id: String?) async {
+        guard selectedPlaceId != id else {
+            return
+        }
+        
+        previousSelectedPlaceId = selectedPlaceId
+        
         selectedPlaceId = id
     }
 }
