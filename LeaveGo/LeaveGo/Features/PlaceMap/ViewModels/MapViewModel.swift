@@ -22,7 +22,6 @@ final class MapViewModel {
     public var userLocation: CLLocationCoordinate2D?
     public var placeList: [PlaceDTO] = []
     public var selectedPlaceId: String?
-    public var cameraPosition = NMGLatLng(lat: 37.5666, lng: 126.9784) // 일회용 (제거)
     private var previousSelectedPlaceId: String?
     
     public var selectedPlace: PlaceDTO? {
