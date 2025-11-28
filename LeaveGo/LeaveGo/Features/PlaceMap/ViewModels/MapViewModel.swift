@@ -9,6 +9,11 @@ import SwiftUI
 import CoreLocation
 import NMapsMap
 
+// MARK: NaverMapViewDelegate Protocol
+protocol NaverMapViewDelegate: AnyObject {
+  func setSelectedPlaceId(id : String?) async
+}
+
 @MainActor
 @Observable
 final class MapViewModel {
@@ -99,5 +104,13 @@ final class MapViewModel {
         } catch {
             print(#function, "🔥 에러: \(error.localizedDescription)")
         }
+    }
+}
+
+// MARK: - NaverMapViewDelegate
+
+extension MapViewModel: NaverMapViewDelegate {
+    func setSelectedPlaceId(id: String?) async {
+        selectedPlaceId = id
     }
 }
