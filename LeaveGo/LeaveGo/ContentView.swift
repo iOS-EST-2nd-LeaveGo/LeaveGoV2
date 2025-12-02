@@ -9,6 +9,9 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
+    
+    @State private var mapViewModel = MapViewModel()
+    
     var body: some View {
         TabView {
             DummyView()
@@ -18,6 +21,7 @@ struct ContentView: View {
                 }
             
             MapView()
+                .environment(mapViewModel)
                 .tabItem {
                     Image(systemName: "map.fill")
                     Text("장소")
