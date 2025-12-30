@@ -9,9 +9,9 @@ import Foundation
 
 struct APIKeys {
     static var naverMapClientId: String {
-        if let clientId = Bundle.main.object(forInfoDictionaryKey: "NMFClientId") as? String, !clientId.isEmpty,
-           clientId != "NAVER_MAP_CLIENT_ID" {
-            return clientId
+        if let clientID = Bundle.main.object(forInfoDictionaryKey: "NMFClientId") as? String, !clientID.isEmpty,
+           clientID != "NAVER_MAP_CLIENT_ID" {
+            return clientID
         }
         
 #if DEBUG

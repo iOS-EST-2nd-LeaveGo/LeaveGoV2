@@ -9,10 +9,9 @@ import SwiftUI
 
 struct MapView: View {
     
-    @Environment(MapViewModel.self) private var viewModel
+    @State private var viewModel = MapViewModel()
     
     var body: some View {
-        @Bindable var viewModel = viewModel
         
         ZStack {
             NaverMapView()
