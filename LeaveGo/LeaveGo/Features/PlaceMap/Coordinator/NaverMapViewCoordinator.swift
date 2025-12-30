@@ -34,7 +34,7 @@ class NaverMapViewCoordinator: NSObject {
     
     // 마커 캐시
     private var currentMarkers: [String: NMFMarker] = [:]
-    private var cachedPlaceIds: Set<String> = []
+    private var cachedPlaceIDs: Set<String> = []
     
     // 상태 플래그
     var hasMovedToUserLocation = false
@@ -67,26 +67,26 @@ class NaverMapViewCoordinator: NSObject {
     /// 6. 캐시 업데이트
     /// ```
     public func updateMarkers(on mapView: NMFMapView, with placeList: [PlaceDTO]) {
-        let newIds = Set(placeList.map { $0.id })
+        let newIDs = Set(placeList.map { $0.id })
         
         // 변경 없으면 스킵
-        guard cachedPlaceIds != newIds else { return }
+        guard cachedPlaceIDs != newIDs else { return }
         
         // 1. 삭제: 새 데이터에 없는 기존 마커 제거
-        let toRemove = cachedPlaceIds.subtracting(newIds)
+        let toRemove = cachedPlaceIDs.subtracting(newIDs)
         for id in toRemove {
             removeMarker(id: id)
         }
         
         // 2. 추가: 기존에 없는 새 마커 생성
-        let toAdd = newIds.subtracting(cachedPlaceIds)
+        let toAdd = newIDs.subtracting(cachedPlaceIDs)
         for place in placeList where toAdd.contains(place.id) {
             let marker = createMarker(from: place)
             marker.mapView = mapView
             currentMarkers[place.id] = marker
         }
         
-        cachedPlaceIds = newIds
+        cachedPlaceIDs = newIDs
     }
     
     // MARK: createMarker
@@ -122,12 +122,12 @@ class NaverMapViewCoordinator: NSObject {
         
         // 탭 핸들러: 오버레이가 터치될 경우 호출되는 콜백 블록
         marker.touchHandler = { [weak self] overlay -> Bool in
-            guard let placeId = overlay.userInfo["placeId"] as? String else {
+            guard let placeID = overlay.userInfo["placeId"] as? String else {
                 return true
             }
             
             Task { @MainActor in
-                await self?.naverMapViewDelegate?.setSelectedPlaceId(id: placeId)
+                await self?.naverMapViewDelegate?.setSelectedPlaceID(id: placeID)
             }
             return true
         }
@@ -152,10 +152,10 @@ class NaverMapViewCoordinator: NSObject {
     /// 이전 선택과 현재 선택 마커 **최대 2개만** 업데이트하여 성능을 극대화합니다.
     /// 모든 마커를 순회하는 기존 방식(O(n))과 달리, 변경된 마커만 직접 접근하여
     /// 업데이트하므로 O(1) 복잡도를 달성합니다.
-    public func updateSelectedMarkerOptimized(selectedId: String?, previousSelectedId: String?) {
+    public func updateSelectedMarkerOptimized(selectedID: String?, previousSelectedID: String?) {
         // 1. 이전 선택 마커를 기본 스타일로 복원
-        if let prevId = previousSelectedId,
-           let prevMarker = currentMarkers[prevId] {
+        if let prevID = previousSelectedID,
+           let prevMarker = currentMarkers[prevID] {
             prevMarker.iconTintColor = .systemBlue
             prevMarker.width = 24
             prevMarker.height = 32
@@ -163,8 +163,8 @@ class NaverMapViewCoordinator: NSObject {
         }
         
         // 2. 새로운 선택 마커를 강조 스타일로 변경
-        if let newId = selectedId,
-           let newMarker = currentMarkers[newId] {
+        if let newID = selectedID,
+           let newMarker = currentMarkers[newID] {
             newMarker.iconTintColor = .systemOrange
             newMarker.width = 32
             newMarker.height = 42
@@ -190,7 +190,7 @@ extension NaverMapViewCoordinator: NMFMapViewTouchDelegate {
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
         // 지도 빈 영역 탭 시 선택 해제
         Task { @MainActor in
-            await naverMapViewDelegate?.setSelectedPlaceId(id: nil)
+            await naverMapViewDelegate?.setSelectedPlaceID(id: nil)
         }
     }
     
