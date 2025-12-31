@@ -10,15 +10,19 @@ import SwiftUI
 struct PlaceMarkerView: View {
     
     let isSelected: Bool
+    let thumbnail: UIImage?
     
-    init(isSelected: Bool = false) {
+    init(isSelected: Bool = false, thumbnail: UIImage? = nil) {
         self.isSelected = isSelected
+        self.thumbnail = thumbnail
     }
     
     var body: some View {
         ZStack {
+#if DEBUG
             Rectangle()
                 .fill(.red.opacity(0.3))
+#endif
             
             Circle()
                 .fill(isSelected ? .lgAccent : .lgBackgroundAccent)
@@ -26,7 +30,21 @@ struct PlaceMarkerView: View {
                        height: isSelected ? 48 : 40)
                 .shadow(.medium)
             
-            Image(systemName: "house.fill")
+            if let thumbnail {
+                thumbnailImage(Image(uiImage: thumbnail))
+            } else {
+                thumbnailImage(Image("img_logoWithNoBg"))
+            }
         }
+    }
+    
+    @ViewBuilder
+    private func thumbnailImage(_ image: Image) -> some View {
+        image
+            .resizable()
+            .scaledToFill()
+            .frame(width: isSelected ? 40 : 32,
+                   height: isSelected ? 40 : 32)
+            .clipShape(Circle())
     }
 }
