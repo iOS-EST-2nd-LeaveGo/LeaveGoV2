@@ -94,7 +94,7 @@ struct NaverMapView: UIViewRepresentable {
         
         coordinator.updateMarkers(on: uiView.mapView, with: viewModel.placeList)
         
-        coordinator.updateSelectedMarkerOptimized(
+        coordinator.updateSelectedMarker(
             selectedID: viewModel.selectedPlaceID,
             previousSelectedID: viewModel.getPreviousSelectedPlaceID())
     }

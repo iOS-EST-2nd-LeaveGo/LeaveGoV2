@@ -39,9 +39,25 @@ class NaverMapViewCoordinator: NSObject {
     // 상태 플래그
     var hasMovedToUserLocation = false
     
-    // 공유 아이콘 (메모리 최적화)
-    private let defaultIcon = "img_logoWithNoBg"
-    private let selectedIcon = "img_userAnnotationPlaceholder"
+    // MARK: - 마커 이미지 캐시
+    
+    /// 선택되지 않은 마커의 이미지
+    private lazy var defaultMarkerImage: NMFOverlayImage? = {
+        let markerView = PlaceMarkerView(isSelected: false)
+        guard let uiImage = markerView.asMarkerImage(size: CGSize(width: 50, height: 50)) else {
+            return nil
+        }
+        return NMFOverlayImage(image: uiImage)
+    }()
+    
+    /// 선택된 마커의 이미지
+    private lazy var selectedMarkerImage: NMFOverlayImage? = {
+        let markerView = PlaceMarkerView(isSelected: true)
+        guard let uiImage = markerView.asMarkerImage(size: CGSize(width: 60, height: 60)) else {
+            return nil
+        }
+        return NMFOverlayImage(image: uiImage)
+    }()
     
     init(viewModel: MapViewModel) {
         naverMapViewDelegate = viewModel
@@ -104,11 +120,10 @@ class NaverMapViewCoordinator: NSObject {
             marker.position = NMGLatLng(lat: lat, lng: lng)
         }
         
-        // 스타일 설정
-        marker.iconImage = NMFOverlayImage(name: defaultIcon)
-        marker.iconTintColor = .systemBlue
-        marker.width = 24
-        marker.height = 32
+        // 스타일 설정 - 캐시된 기본 이미지 사용
+        marker.iconImage = defaultMarkerImage ?? NMFOverlayImage()
+        marker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+        marker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
         
         // 캡션 설정
         marker.captionText = place.title
@@ -147,27 +162,34 @@ class NaverMapViewCoordinator: NSObject {
     }
     
     // MARK: updateSelectedMarker
+    
     /// 선택된 마커를 최적화된 방식으로 업데이트합니다.
     ///
     /// 이전 선택과 현재 선택 마커 **최대 2개만** 업데이트하여 성능을 극대화합니다.
     /// 모든 마커를 순회하는 기존 방식(O(n))과 달리, 변경된 마커만 직접 접근하여
     /// 업데이트하므로 O(1) 복잡도를 달성합니다.
-    public func updateSelectedMarkerOptimized(selectedID: String?, previousSelectedID: String?) {
+    ///
+    /// - Parameters:
+    ///   - selectedID: 현재 선택된 마커의 ID
+    ///   - previousSelectedID: 이전에 선택되었던 마커의 ID
+    ///
+    /// - Note: 캐시된 이미지를 재사용하므로 이미지 재생성 비용이 발생하지 않습니다.
+    public func updateSelectedMarker(selectedID: String?, previousSelectedID: String?) {
         // 1. 이전 선택 마커를 기본 스타일로 복원
         if let prevID = previousSelectedID,
            let prevMarker = currentMarkers[prevID] {
-            prevMarker.iconTintColor = .systemBlue
-            prevMarker.width = 24
-            prevMarker.height = 32
+            prevMarker.iconImage = defaultMarkerImage ?? NMFOverlayImage()
+            prevMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+            prevMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
             prevMarker.zIndex = 0
         }
         
         // 2. 새로운 선택 마커를 강조 스타일로 변경
         if let newID = selectedID,
            let newMarker = currentMarkers[newID] {
-            newMarker.iconTintColor = .systemOrange
-            newMarker.width = 32
-            newMarker.height = 42
+            newMarker.iconImage = selectedMarkerImage ?? NMFOverlayImage()
+            newMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+            newMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
             newMarker.zIndex = 1
         }
     }
