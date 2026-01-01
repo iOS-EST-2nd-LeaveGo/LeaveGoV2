@@ -217,6 +217,14 @@ class NaverMapViewCoordinator: NSObject {
     
     // MARK: loadThumbnailAndUpdateMarker
     
+    /// 썸네일 이미지가 그려진 장소 marker를 생성해 캐싱합니다.
+    ///
+    /// - Parameters:
+    ///   - placeID: 작업을 진행할 장소의 ID
+    ///   - url: 장소 썸네일 이미지의 url
+    ///   - marker: 다시 그릴 Marker의 class 참조
+    ///
+    /// - Note: 초기 시점엔 썸네일 이미지가 없는 'defaultMarkerImage' 프로퍼티를 올려놓습니다. 이후 장소 썸네일 이미지 Load가 끝나면 이 함수가 실행되어 썸네일이 포함된 마커 이미지로 다시 그립니다.
     private func loadThumbnailAndUpdateMarker(placeID: String,
                                               url: URL,
                                               marker: NMFMarker) {
