@@ -32,6 +32,10 @@ struct MapView: View {
                 .sheet(item: selectedPlaceBinding) { place in
                     PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
                         .presentationDetents([.medium, .large])
+                        .onAppear {
+                            // Sheet가 나타날 때 해당 마커 위치로 카메라 이동
+                            viewModel.moveCameraToSelectedPlace()
+                        }
                 }
             
             // Map Launch Screen

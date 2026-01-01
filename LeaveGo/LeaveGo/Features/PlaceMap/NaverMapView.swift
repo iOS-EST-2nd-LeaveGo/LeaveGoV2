@@ -30,7 +30,8 @@ struct NaverMapView: UIViewRepresentable {
         let view = NMFNaverMapView()
         
         // 기본 설정
-        view.showZoomControls = false
+//        view.showZoomControls = false
+        // TODO: custom zoom controller 도입 예정
         view.mapView.positionMode = .direction
         view.mapView.zoomLevel = 15
         view.mapView.isIndoorMapEnabled = true
@@ -77,6 +78,15 @@ struct NaverMapView: UIViewRepresentable {
     func updateUIView(_ uiView: NMFNaverMapView, context: Context) {
         let coordinator = context.coordinator
         
+        /// marker가 PlaceDetailSheetView에 가려지지 않도록 contentInset을 sheet 높이 만큼 보정합니다.
+        if viewModel.selectedPlaceID != nil {
+            let sheetHeight = UIScreen.main.bounds.height * 0.4
+            uiView.mapView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sheetHeight, right: 0)
+        } else {
+            uiView.mapView.contentInset = .zero
+        }
+        
+        // 사용자 위치 이동 처리
         if let location = viewModel.userLocation,
            !coordinator.hasMovedToUserLocation {
             let userCoord = NMGLatLng(lat: location.latitude,
@@ -90,6 +100,19 @@ struct NaverMapView: UIViewRepresentable {
             uiView.mapView.locationOverlay.hidden = false
             
             coordinator.hasMovedToUserLocation = true
+        }
+        
+        // 카메라 이동 처리
+        if let targetLocation = viewModel.targetCameraLocation,
+           coordinator.lastTargetCameraLocation != targetLocation {
+            let targetCoord = NMGLatLng(lat: targetLocation.latitude,
+                                        lng: targetLocation.longitude)
+            let cameraUpdate = NMFCameraUpdate(scrollTo: targetCoord)
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.3
+            uiView.mapView.moveCamera(cameraUpdate)
+            
+            coordinator.lastTargetCameraLocation = targetLocation
         }
         
         coordinator.updateMarkers(on: uiView.mapView, with: viewModel.placeList)

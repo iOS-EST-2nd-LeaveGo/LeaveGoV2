@@ -24,6 +24,9 @@ final class MapViewModel {
     public var selectedPlaceID: String?
     private var previousSelectedPlaceID: String?
     
+    /// 카메라를 이동시킬 목표 좌표 (설정하면 지도가 해당 위치로 이동)
+    public var targetCameraLocation: CLLocationCoordinate2D?
+    
     public var selectedPlace: PlaceDTO? {
         placeList.first { $0.id == selectedPlaceID }
     }
@@ -46,6 +49,19 @@ final class MapViewModel {
     
     func getPreviousSelectedPlaceID() -> String? {
         return previousSelectedPlaceID
+    }
+    
+    /// 선택된 장소의 위치로 카메라를 이동시킵니다
+    func moveCameraToSelectedPlace() {
+        guard let place = selectedPlace,
+              let latStr = place.mapY,
+              let lngStr = place.mapX,
+              let lat = Double(latStr),
+              let lng = Double(lngStr) else {
+            return
+        }
+        
+        targetCameraLocation = CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
     
     // MARK: - LocationManager

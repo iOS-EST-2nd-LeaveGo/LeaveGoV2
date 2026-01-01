@@ -39,6 +39,9 @@ class NaverMapViewCoordinator: NSObject {
     // 상태 플래그
     var hasMovedToUserLocation = false
     
+    /// 마지막으로 이동한 카메라 위치 (중복 이동 방지용)
+    var lastTargetCameraLocation: CLLocationCoordinate2D?
+    
     // MARK: - 마커 이미지 캐시
     
     /// 장소별 마커 이미지 캐시
