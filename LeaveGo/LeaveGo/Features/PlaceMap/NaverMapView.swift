@@ -12,6 +12,7 @@ struct NaverMapView: UIViewRepresentable {
     
     @Environment(MapViewModel.self) private var viewModel
     
+    // MARK: makeUIView
     /// Naver 지도의 UIKit 뷰를 생성하고 초기 설정을 수행합니다.
     ///
     /// 이 메서드는 UIViewRepresentable 프로토콜의 필수 구현으로,
@@ -30,11 +31,12 @@ struct NaverMapView: UIViewRepresentable {
         let view = NMFNaverMapView()
         
         // 기본 설정
-        view.showZoomControls = false
         view.mapView.positionMode = .direction
         view.mapView.zoomLevel = 15
         view.mapView.isIndoorMapEnabled = true
-        view.showLocationButton = true
+        view.showZoomControls = false
+        view.showLocationButton = false
+        // TODO: custom zoom controller 도입 예정
         view.showCompass = true
         
         // 지도 터치 델리게이트 설정
@@ -55,6 +57,7 @@ struct NaverMapView: UIViewRepresentable {
         return view
     }
     
+    // MARK: updateUIView
     /// 이 메서드는 UIViewRepresentable 프로토콜의 필수 구현으로,
     /// SwiftUI의 상태(@State, @Binding, @Environment 등)가 변경될 때마다 자동으로 호출됩니다.
     /// ViewModel의 변경사항을 UIKit 기반 지도 뷰에 반영하는 역할을 합니다.
@@ -77,6 +80,15 @@ struct NaverMapView: UIViewRepresentable {
     func updateUIView(_ uiView: NMFNaverMapView, context: Context) {
         let coordinator = context.coordinator
         
+        /// marker가 PlaceDetailSheetView에 가려지지 않도록 contentInset을 sheet 높이 만큼 보정합니다.
+        if viewModel.selectedPlaceID != nil {
+            let sheetHeight = UIScreen.main.bounds.height * 0.4
+            uiView.mapView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sheetHeight, right: 0)
+        } else {
+            uiView.mapView.contentInset = .zero
+        }
+        
+        // 사용자 위치 이동 처리
         if let location = viewModel.userLocation,
            !coordinator.hasMovedToUserLocation {
             let userCoord = NMGLatLng(lat: location.latitude,
@@ -92,13 +104,27 @@ struct NaverMapView: UIViewRepresentable {
             coordinator.hasMovedToUserLocation = true
         }
         
+        // 카메라 이동 처리
+        if let targetLocation = viewModel.targetCameraLocation,
+           coordinator.lastTargetCameraLocation != targetLocation {
+            let targetCoord = NMGLatLng(lat: targetLocation.latitude,
+                                        lng: targetLocation.longitude)
+            let cameraUpdate = NMFCameraUpdate(scrollTo: targetCoord)
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.3
+            uiView.mapView.moveCamera(cameraUpdate)
+            
+            coordinator.lastTargetCameraLocation = targetLocation
+        }
+        
         coordinator.updateMarkers(on: uiView.mapView, with: viewModel.placeList)
         
-        coordinator.updateSelectedMarkerOptimized(
-            selectedId: viewModel.selectedPlaceId,
-            previousSelectedId: viewModel.getPreviousSelectedPlaceId())
+        coordinator.updateSelectedMarker(
+            selectedID: viewModel.selectedPlaceID,
+            previousSelectedID: viewModel.getPreviousSelectedPlaceID())
     }
     
+    // MARK: makeCoordinator
     /// Coordinator 생성
     func makeCoordinator() -> NaverMapViewCoordinator {
         NaverMapViewCoordinator(viewModel: viewModel)

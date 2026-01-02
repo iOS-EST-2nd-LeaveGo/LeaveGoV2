@@ -9,14 +9,34 @@ import SwiftUI
 
 struct MapView: View {
     
-    @Environment(MapViewModel.self) private var viewModel
+    @State private var viewModel = MapViewModel()
+//    @State private var selectedPlace: PlaceDTO?
+    
+    private var selectedPlaceBinding: Binding<PlaceDTO?> {
+        Binding(
+            get: { viewModel.selectedPlace },
+            set: { newValue in
+                // nil이 전달되면 명시적으로 선택 해제
+                Task { @MainActor in
+                    await viewModel.setSelectedPlaceID(id: newValue?.id)
+                }
+            }
+        )
+    }
     
     var body: some View {
-        @Bindable var viewModel = viewModel
         
         ZStack {
             NaverMapView()
                 .environment(viewModel)
+                .sheet(item: selectedPlaceBinding) { place in
+                    PlaceDetailSheetView(place: place, buttonTitle: "경로 찾기")
+                        .presentationDetents([.medium, .large])
+                        .onAppear {
+                            // Sheet가 나타날 때 해당 마커 위치로 카메라 이동
+                            viewModel.moveCameraToSelectedPlace()
+                        }
+                }
             
             // Map Launch Screen
             if !viewModel.isLocationLoaded {

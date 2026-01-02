@@ -34,14 +34,44 @@ class NaverMapViewCoordinator: NSObject {
     
     // 마커 캐시
     private var currentMarkers: [String: NMFMarker] = [:]
-    private var cachedPlaceIds: Set<String> = []
+    private var cachedPlaceIDs: Set<String> = []
     
     // 상태 플래그
     var hasMovedToUserLocation = false
     
-    // 공유 아이콘 (메모리 최적화)
-    private let defaultIcon = "img_logoWithNoBg"
-    private let selectedIcon = "img_userAnnotationPlaceholder"
+    /// 마지막으로 이동한 카메라 위치 (중복 이동 방지용)
+    var lastTargetCameraLocation: CLLocationCoordinate2D?
+    
+    // MARK: 마커 이미지 캐시
+    
+    /// 장소별 마커 이미지 캐시
+    private var markerImageCache: [String: NMFOverlayImage] = [:]
+    private var selectedMarkerImageCache: [String: NMFOverlayImage] = [:]
+    
+    private let imageRepository = ImageRepository.shared
+    
+    private let defaultMarkerSize = CGSize(width: 50, height: 100)
+    private let selectedMarkerSize = CGSize(width: 60, height: 120)
+    
+    /// 선택되지 않은 마커의 이미지
+    private lazy var defaultMarkerImage: NMFOverlayImage? = {
+        let markerView = PlaceMarkerView(isSelected: false)
+        guard let uiImage = markerView.asMarkerImage(size: defaultMarkerSize) else {
+            return nil
+        }
+        return NMFOverlayImage(image: uiImage)
+    }()
+    
+    /// 선택된 마커의 이미지
+    private lazy var selectedMarkerImage: NMFOverlayImage? = {
+        let markerView = PlaceMarkerView(isSelected: true)
+        guard let uiImage = markerView.asMarkerImage(size: selectedMarkerSize) else {
+            return nil
+        }
+        return NMFOverlayImage(image: uiImage)
+    }()
+    
+    private var markerUpdateTask: Task<Void, Never>?
     
     init(viewModel: MapViewModel) {
         naverMapViewDelegate = viewModel
@@ -67,26 +97,26 @@ class NaverMapViewCoordinator: NSObject {
     /// 6. 캐시 업데이트
     /// ```
     public func updateMarkers(on mapView: NMFMapView, with placeList: [PlaceDTO]) {
-        let newIds = Set(placeList.map { $0.id })
+        let newIDs = Set(placeList.map { $0.id })
         
         // 변경 없으면 스킵
-        guard cachedPlaceIds != newIds else { return }
+        guard cachedPlaceIDs != newIDs else { return }
         
         // 1. 삭제: 새 데이터에 없는 기존 마커 제거
-        let toRemove = cachedPlaceIds.subtracting(newIds)
+        let toRemove = cachedPlaceIDs.subtracting(newIDs)
         for id in toRemove {
             removeMarker(id: id)
         }
         
         // 2. 추가: 기존에 없는 새 마커 생성
-        let toAdd = newIds.subtracting(cachedPlaceIds)
+        let toAdd = newIDs.subtracting(cachedPlaceIDs)
         for place in placeList where toAdd.contains(place.id) {
             let marker = createMarker(from: place)
             marker.mapView = mapView
             currentMarkers[place.id] = marker
         }
         
-        cachedPlaceIds = newIds
+        cachedPlaceIDs = newIDs
     }
     
     // MARK: createMarker
@@ -104,11 +134,10 @@ class NaverMapViewCoordinator: NSObject {
             marker.position = NMGLatLng(lat: lat, lng: lng)
         }
         
-        // 스타일 설정
-        marker.iconImage = NMFOverlayImage(name: defaultIcon)
-        marker.iconTintColor = .systemBlue
-        marker.width = 24
-        marker.height = 32
+        // 스타일 설정 - 캐시된 기본 이미지 사용
+        marker.iconImage = defaultMarkerImage ?? NMFOverlayImage()
+        marker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+        marker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
         
         // 캡션 설정
         marker.captionText = place.title
@@ -122,14 +151,22 @@ class NaverMapViewCoordinator: NSObject {
         
         // 탭 핸들러: 오버레이가 터치될 경우 호출되는 콜백 블록
         marker.touchHandler = { [weak self] overlay -> Bool in
-            guard let placeId = overlay.userInfo["placeId"] as? String else {
+            guard let placeID = overlay.userInfo["placeId"] as? String else {
                 return true
             }
             
             Task { @MainActor in
-                await self?.naverMapViewDelegate?.setSelectedPlaceId(id: placeId)
+                await self?.naverMapViewDelegate?.setSelectedPlaceID(id: placeID)
             }
             return true
+        }
+        
+        // 장소별 썸네일 마크를 미리 생성 및 캐싱
+        if let thumbnailURLString = place.thumbnailImage,
+        let thumbnailURL = URL(string: thumbnailURLString) {
+            loadThumbnailAndUpdateMarker(placeID: place.id,
+                                         url: thumbnailURL,
+                                         marker: marker)
         }
         
         return marker
@@ -144,31 +181,107 @@ class NaverMapViewCoordinator: NSObject {
         marker.touchHandler = nil
         marker.mapView = nil
         currentMarkers.removeValue(forKey: id)
+        
+        // 마커 썸네일 이미지 캐시 정리
+        markerImageCache.removeValue(forKey: id)
+        selectedMarkerImageCache.removeValue(forKey: id)
     }
     
     // MARK: updateSelectedMarker
+    
     /// 선택된 마커를 최적화된 방식으로 업데이트합니다.
     ///
     /// 이전 선택과 현재 선택 마커 **최대 2개만** 업데이트하여 성능을 극대화합니다.
     /// 모든 마커를 순회하는 기존 방식(O(n))과 달리, 변경된 마커만 직접 접근하여
     /// 업데이트하므로 O(1) 복잡도를 달성합니다.
-    public func updateSelectedMarkerOptimized(selectedId: String?, previousSelectedId: String?) {
-        // 1. 이전 선택 마커를 기본 스타일로 복원
-        if let prevId = previousSelectedId,
-           let prevMarker = currentMarkers[prevId] {
-            prevMarker.iconTintColor = .systemBlue
-            prevMarker.width = 24
-            prevMarker.height = 32
-            prevMarker.zIndex = 0
+    ///
+    /// - Parameters:
+    ///   - selectedID: 현재 선택된 마커의 ID
+    ///   - previousSelectedID: 이전에 선택되었던 마커의 ID
+    ///
+    /// - Note: 캐시된 이미지를 재사용하므로 이미지 재생성 비용이 발생하지 않습니다.
+    public func updateSelectedMarker(selectedID: String?, previousSelectedID: String?) {
+        
+        markerUpdateTask?.cancel()
+        
+        if let prevID = previousSelectedID,
+           let prevMarker = currentMarkers[prevID] {
+            prevMarker.hidden = true
         }
         
-        // 2. 새로운 선택 마커를 강조 스타일로 변경
-        if let newId = selectedId,
-           let newMarker = currentMarkers[newId] {
-            newMarker.iconTintColor = .systemOrange
-            newMarker.width = 32
-            newMarker.height = 42
-            newMarker.zIndex = 1
+        if let newID = selectedID,
+           let newMarker = currentMarkers[newID] {
+            newMarker.hidden = true
+        }
+        
+        markerUpdateTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(50))
+            
+            guard !Task.isCancelled else { return }
+            
+            // 1. 이전 선택 마커를 기본 스타일(deselected)로 복원
+            if let prevID = previousSelectedID,
+               let prevMarker = self.currentMarkers[prevID] {
+                prevMarker.iconImage = self.markerImageCache[prevID] ?? self.defaultMarkerImage ?? NMFOverlayImage()
+                prevMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+                prevMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
+                prevMarker.zIndex = 0
+                prevMarker.hidden = false
+            }
+            
+            // 2. 새로 선택된 마커를 강조 스타일(selected)로 변경
+            if let newID = selectedID,
+               let newMarker = self.currentMarkers[newID] {
+                newMarker.iconImage = selectedMarkerImageCache[newID] ?? selectedMarkerImage ?? NMFOverlayImage()
+                newMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+                newMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
+                newMarker.zIndex = 1
+                newMarker.hidden = false
+            }
+        }
+    }
+    
+    // MARK: loadThumbnailAndUpdateMarker
+    
+    /// 썸네일 이미지가 그려진 장소 marker를 생성해 캐싱합니다.
+    ///
+    /// - Parameters:
+    ///   - placeID: 작업을 진행할 장소의 ID
+    ///   - url: 장소 썸네일 이미지의 url
+    ///   - marker: 다시 그릴 Marker의 class 참조
+    ///
+    /// - Note: 초기 시점엔 썸네일 이미지가 없는 'defaultMarkerImage' 프로퍼티를 올려놓습니다. 이후 장소 썸네일 이미지 Load가 끝나면 이 함수가 실행되어 썸네일이 포함된 마커 이미지로 다시 그립니다.
+    private func loadThumbnailAndUpdateMarker(placeID: String,
+                                              url: URL,
+                                              marker: NMFMarker) {
+        if let cachedImage = markerImageCache[placeID] {
+            marker.iconImage = cachedImage
+            return
+        }
+        
+        Task { @MainActor in
+            guard let thumbnailImage = await imageRepository.loadImage(from: url) else {
+                return
+            }
+            
+            // deselected 버전 marker image
+            let markerView = PlaceMarkerView(isSelected: false, thumbnail: thumbnailImage)
+            guard let uiImage = markerView.asMarkerImage(size: defaultMarkerSize) else {
+                return
+            }
+            
+            let overlayImage = NMFOverlayImage(image: uiImage)
+            self.markerImageCache[placeID] = overlayImage
+            
+            // selected 버전 marker image
+            let selectedMarkerView = PlaceMarkerView(isSelected: true, thumbnail: thumbnailImage)
+            if let selectedUIImage = selectedMarkerView.asMarkerImage(size: selectedMarkerSize) {
+                self.selectedMarkerImageCache[placeID] = NMFOverlayImage(image: selectedUIImage)
+            }
+            
+            if marker.mapView != nil {
+                marker.iconImage = overlayImage
+            }
         }
     }
     
@@ -180,6 +293,9 @@ class NaverMapViewCoordinator: NSObject {
             marker.mapView = nil
         }
         currentMarkers.removeAll()
+        markerImageCache.removeAll()
+        selectedMarkerImageCache.removeAll()
+        markerUpdateTask?.cancel()
     }
 }
 
@@ -190,7 +306,7 @@ extension NaverMapViewCoordinator: NMFMapViewTouchDelegate {
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
         // 지도 빈 영역 탭 시 선택 해제
         Task { @MainActor in
-            await naverMapViewDelegate?.setSelectedPlaceId(id: nil)
+            await naverMapViewDelegate?.setSelectedPlaceID(id: nil)
         }
     }
     

@@ -11,7 +11,7 @@ import NMapsMap
 
 // MARK: NaverMapViewDelegate Protocol
 protocol NaverMapViewDelegate: AnyObject {
-  func setSelectedPlaceId(id : String?) async
+    func setSelectedPlaceID(id: String?) async
 }
 
 @MainActor
@@ -21,11 +21,14 @@ final class MapViewModel {
     // MARK: - Properties
     public var userLocation: CLLocationCoordinate2D?
     public var placeList: [PlaceDTO] = []
-    public var selectedPlaceId: String?
-    private var previousSelectedPlaceId: String?
+    public var selectedPlaceID: String?
+    private var previousSelectedPlaceID: String?
+    
+    /// 카메라를 이동시킬 목표 좌표 (설정하면 지도가 해당 위치로 이동)
+    public var targetCameraLocation: CLLocationCoordinate2D?
     
     public var selectedPlace: PlaceDTO? {
-        placeList.first { $0.id == selectedPlaceId }
+        placeList.first { $0.id == selectedPlaceID }
     }
     
     /// 여행지 API 요청을 처리하는 리포지토리
@@ -44,8 +47,21 @@ final class MapViewModel {
     
     // MARK: Method
     
-    func getPreviousSelectedPlaceId() -> String? {
-        return previousSelectedPlaceId
+    func getPreviousSelectedPlaceID() -> String? {
+        return previousSelectedPlaceID
+    }
+    
+    /// 선택된 장소의 위치로 카메라를 이동시킵니다
+    func moveCameraToSelectedPlace() {
+        guard let place = selectedPlace,
+              let latStr = place.mapY,
+              let lngStr = place.mapX,
+              let lat = Double(latStr),
+              let lng = Double(lngStr) else {
+            return
+        }
+        
+        targetCameraLocation = CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
     
     // MARK: - LocationManager
@@ -116,13 +132,13 @@ final class MapViewModel {
 // MARK: - NaverMapViewDelegate
 
 extension MapViewModel: NaverMapViewDelegate {
-    func setSelectedPlaceId(id: String?) async {
-        guard selectedPlaceId != id else {
+    func setSelectedPlaceID(id: String?) async {
+        guard selectedPlaceID != id else {
             return
         }
         
-        previousSelectedPlaceId = selectedPlaceId
+        previousSelectedPlaceID = selectedPlaceID
         
-        selectedPlaceId = id
+        selectedPlaceID = id
     }
 }
