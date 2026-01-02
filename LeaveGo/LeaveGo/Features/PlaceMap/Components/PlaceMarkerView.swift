@@ -33,6 +33,11 @@ struct PlaceMarkerView: View {
             if let thumbnail {
                 thumbnailImage(Image(uiImage: thumbnail))
             } else {
+                Circle()
+                    .fill(isSelected ? .lgSubAccent : .clear)
+                    .frame(width: 40,
+                           height: 40)
+                
                 thumbnailImage(Image("img_logoWithNoBg"))
             }
         }
