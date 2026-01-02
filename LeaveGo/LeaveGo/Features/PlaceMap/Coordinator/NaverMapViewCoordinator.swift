@@ -42,7 +42,7 @@ class NaverMapViewCoordinator: NSObject {
     /// 마지막으로 이동한 카메라 위치 (중복 이동 방지용)
     var lastTargetCameraLocation: CLLocationCoordinate2D?
     
-    // MARK: - 마커 이미지 캐시
+    // MARK: 마커 이미지 캐시
     
     /// 장소별 마커 이미지 캐시
     private var markerImageCache: [String: NMFOverlayImage] = [:]
@@ -70,6 +70,8 @@ class NaverMapViewCoordinator: NSObject {
         }
         return NMFOverlayImage(image: uiImage)
     }()
+    
+    private var markerUpdateTask: Task<Void, Never>?
     
     init(viewModel: MapViewModel) {
         naverMapViewDelegate = viewModel
@@ -199,22 +201,43 @@ class NaverMapViewCoordinator: NSObject {
     ///
     /// - Note: 캐시된 이미지를 재사용하므로 이미지 재생성 비용이 발생하지 않습니다.
     public func updateSelectedMarker(selectedID: String?, previousSelectedID: String?) {
-        // 1. 이전 선택 마커를 기본 스타일로 복원
+        
+        markerUpdateTask?.cancel()
+        
         if let prevID = previousSelectedID,
            let prevMarker = currentMarkers[prevID] {
-            prevMarker.iconImage = markerImageCache[prevID] ?? defaultMarkerImage ?? NMFOverlayImage()
-            prevMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
-            prevMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
-            prevMarker.zIndex = 0
+            prevMarker.hidden = true
         }
         
-        // 2. 새로운 선택 마커를 강조 스타일로 변경
         if let newID = selectedID,
            let newMarker = currentMarkers[newID] {
-            newMarker.iconImage = selectedMarkerImageCache[newID] ?? selectedMarkerImage ?? NMFOverlayImage()
-            newMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
-            newMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
-            newMarker.zIndex = 1
+            newMarker.hidden = true
+        }
+        
+        markerUpdateTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(50))
+            
+            guard !Task.isCancelled else { return }
+            
+            // 1. 이전 선택 마커를 기본 스타일(deselected)로 복원
+            if let prevID = previousSelectedID,
+               let prevMarker = self.currentMarkers[prevID] {
+                prevMarker.iconImage = self.markerImageCache[prevID] ?? self.defaultMarkerImage ?? NMFOverlayImage()
+                prevMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+                prevMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
+                prevMarker.zIndex = 0
+                prevMarker.hidden = false
+            }
+            
+            // 2. 새로 선택된 마커를 강조 스타일(selected)로 변경
+            if let newID = selectedID,
+               let newMarker = self.currentMarkers[newID] {
+                newMarker.iconImage = selectedMarkerImageCache[newID] ?? selectedMarkerImage ?? NMFOverlayImage()
+                newMarker.width = CGFloat(NMF_MARKER_SIZE_AUTO)
+                newMarker.height = CGFloat(NMF_MARKER_SIZE_AUTO)
+                newMarker.zIndex = 1
+                newMarker.hidden = false
+            }
         }
     }
     
@@ -241,6 +264,7 @@ class NaverMapViewCoordinator: NSObject {
                 return
             }
             
+            // deselected 버전 marker image
             let markerView = PlaceMarkerView(isSelected: false, thumbnail: thumbnailImage)
             guard let uiImage = markerView.asMarkerImage(size: defaultMarkerSize) else {
                 return
@@ -249,6 +273,7 @@ class NaverMapViewCoordinator: NSObject {
             let overlayImage = NMFOverlayImage(image: uiImage)
             self.markerImageCache[placeID] = overlayImage
             
+            // selected 버전 marker image
             let selectedMarkerView = PlaceMarkerView(isSelected: true, thumbnail: thumbnailImage)
             if let selectedUIImage = selectedMarkerView.asMarkerImage(size: selectedMarkerSize) {
                 self.selectedMarkerImageCache[placeID] = NMFOverlayImage(image: selectedUIImage)
@@ -258,7 +283,6 @@ class NaverMapViewCoordinator: NSObject {
                 marker.iconImage = overlayImage
             }
         }
-        
     }
     
     // MARK: - DeInit
@@ -271,6 +295,7 @@ class NaverMapViewCoordinator: NSObject {
         currentMarkers.removeAll()
         markerImageCache.removeAll()
         selectedMarkerImageCache.removeAll()
+        markerUpdateTask?.cancel()
     }
 }
 

@@ -12,6 +12,7 @@ struct NaverMapView: UIViewRepresentable {
     
     @Environment(MapViewModel.self) private var viewModel
     
+    // MARK: makeUIView
     /// Naver 지도의 UIKit 뷰를 생성하고 초기 설정을 수행합니다.
     ///
     /// 이 메서드는 UIViewRepresentable 프로토콜의 필수 구현으로,
@@ -30,12 +31,12 @@ struct NaverMapView: UIViewRepresentable {
         let view = NMFNaverMapView()
         
         // 기본 설정
-//        view.showZoomControls = false
-        // TODO: custom zoom controller 도입 예정
         view.mapView.positionMode = .direction
         view.mapView.zoomLevel = 15
         view.mapView.isIndoorMapEnabled = true
-        view.showLocationButton = true
+        view.showZoomControls = false
+        view.showLocationButton = false
+        // TODO: custom zoom controller 도입 예정
         view.showCompass = true
         
         // 지도 터치 델리게이트 설정
@@ -56,6 +57,7 @@ struct NaverMapView: UIViewRepresentable {
         return view
     }
     
+    // MARK: updateUIView
     /// 이 메서드는 UIViewRepresentable 프로토콜의 필수 구현으로,
     /// SwiftUI의 상태(@State, @Binding, @Environment 등)가 변경될 때마다 자동으로 호출됩니다.
     /// ViewModel의 변경사항을 UIKit 기반 지도 뷰에 반영하는 역할을 합니다.
@@ -122,6 +124,7 @@ struct NaverMapView: UIViewRepresentable {
             previousSelectedID: viewModel.getPreviousSelectedPlaceID())
     }
     
+    // MARK: makeCoordinator
     /// Coordinator 생성
     func makeCoordinator() -> NaverMapViewCoordinator {
         NaverMapViewCoordinator(viewModel: viewModel)
